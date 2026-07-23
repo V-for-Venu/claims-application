@@ -2,4 +2,4 @@
 
 ### Building this Application using Python, FastAPI for Now.
 
-### Updating User Name
+### Updating User Name and Email
