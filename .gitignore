@@ -1,4 +1,4 @@
 #Ignoring virtual environment folder
 .venv
 .venv/
-basic-app/__pycache__/main.cpython-314.pyc
+basic-app/__pycache__
