@@ -1,7 +1,8 @@
 ### V 1.0 This is a Claims Application for Understanding Medical Claim Insurance.
 
-### Building this Application using Python, FastAPI for Now.
+#### V1.0 Highlights
 
-### Updating Git User Name and Email
-
-### Configuring Global Username and Credential for Remote Repo Access from Local.
+- Basic Claim Applciation
+- CRUD Operations with Sample Data
+- Data Generator
+- Total Claim Counter
