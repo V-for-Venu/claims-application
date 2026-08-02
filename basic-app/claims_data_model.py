@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from enum import Enum
-
+from datetime import date, timedelta
 
 class ClaimStatus(Enum):
     Approved = "Approved"
@@ -12,4 +12,4 @@ class AddClaimData(BaseModel):
     ClaimName: str
     ClaimAmount: float
     ClaimStatus: ClaimStatus
-    ClaimDate: str
+    ClaimDate: date = Field(default=(date.today()-timedelta(days=90)))

@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 import random
 from claims_data_model import AddClaimData
+from utils import claim_exists
+from claims_data import claims_data
 
 app = FastAPI()
 
@@ -18,60 +20,87 @@ async def scalar_html():
 
 @app.get("/get/claims")
 async def get_claims(id: int | None = None) -> dict:
-    if id in claims_data:
-        return claims_data[id]
-    elif id is None:
-        return claims_data[max(claims_data.keys())]
+    print(len(claims_data))
+    for k, v in claims_data.items():
+        print(f"ID: {k} | Date Type: {type(v['ClaimDate'])}")
+    if claim_exists(id):
+        return {"ClaimId": id, **claims_data[id]}
     else:
-        return {
-            "message": "Claim ID not found. Please provide a valid claim ID."
-        }
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Claim ID not found. Please provide a valid claim ID."
+        )
 
 
 @app.post("/add/claims")
 async def add_claims(claim_data: AddClaimData) -> dict:
     while (new_claim_id := random.randint(10000, 99999)) in claims_data:
         pass
-    if new_claim_id not in claims_data:
+    try:
         claims_data[new_claim_id] = claim_data.model_dump()
         return {"message": f"Claim Addedd Successfully with ID: {new_claim_id}"}
 
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid Claim Data.. Refer to below Error f{str(e)}"
+        )
+
+
+@app.put("/update/claims")
+async def update_claims(id: int, new_claim_record: AddClaimData) -> dict:
+    if claim_exists(id):
+        try:
+            claims_data[id] = new_claim_record.model_dump()
+            return {"message" : "Claim Record Updated Successfully"}
+        except Exception as e:
+            return {"message": f"Error while Updating Claim Record: {str(e)}"}
     else:
-        return {
-            "ERROR": "Invalid Claim Data"
-        }
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Claim ID not found. Please provide a valid Claim ID."
+        )
+
+@app.patch("/update/claims/status")
+async def update_claim_status(id: int, status: str) -> dict:
+    if claim_exists(id):
+        if status in ["Approved", "Rejected", "Pending"]:
+            claims_data[id]["ClaimStatus"] = status
+            return {"message": f"Claim Status Updated Successfully to {status}"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid Claim Status. Please provide a valid status: Approved, Rejected, or Pending."
+            )
 
 
+@app.delete("/delete/claims")
+async def delete_claims(id: int) -> dict:
+    if claim_exists(id):
+        del claims_data[id]
+        return {"message": f"Claim Record with ID: {id} Deleted Successfully"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail = "Claim ID not found. Please provide a valid Claim ID."
+        )
 
-claims_data = {
-    12345: {
-        "claim_name": "Full Body Checkup",
-        "claim_amount": 1000.00,
-        "claim_status": "Pending",
-        "claim_date": "2023-10-01"
-    },
-    19203 : {
-        "claim_name": "Dental Checkup",
-        "claim_amount": 500.00,
-        "claim_status": "Approved",
-        "claim_date": "2023-09-15"
-    },
-    39121: {
-        "claim_name": "Vision Test",
-        "claim_amount": 300.00,
-        "claim_status": "Rejected",
-        "claim_date": "2023-08-20"
-    },
-    9231: {
-        "claim_name": "Physical Therapy",
-        "claim_amount": 800.00,
-        "claim_status": "Pending",
-        "claim_date": "2023-07-10"
-    },
-    12312: {
-        "claim_name": "Chiropractic Adjustment",
-        "claim_amount": 600.00,
-        "claim_status": "Approved",
-        "claim_date": "2023-06-05"
+
+@app.get("/get/claims/latest")
+async def get_latest_claim() -> dict:
+    latest_claim_id = max(
+        claims_data.keys(), 
+        key=lambda k: claims_data[k]["ClaimDate"])
+    return {"ClaimId": latest_claim_id, **claims_data[latest_claim_id]}
+
+
+@app.get("/get/claims/total")
+async def get_total_claims() -> dict:
+    return {
+        "total_claims_count": len(claims_data)
     }
-}
+
+
+@app.get("/get/all/claimIds")
+async def get_all_claim_ids():
+    return {"claim_ids": list(claims_data.keys())}
