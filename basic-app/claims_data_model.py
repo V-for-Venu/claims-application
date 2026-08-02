@@ -13,3 +13,11 @@ class AddClaimData(BaseModel):
     ClaimAmount: float
     ClaimStatus: ClaimStatus
     ClaimDate: date = Field(default=(date.today()-timedelta(days=90)))
+
+
+class ClaimResponse(BaseModel):
+    ClaimId: int
+    ClaimName: str
+    ClaimAmount: float
+    ClaimStatus: ClaimStatus
+    ClaimDate: date

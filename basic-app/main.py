@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 import random
-from claims_data_model import AddClaimData
+from claims_data_model import AddClaimData, ClaimResponse
 from utils import claim_exists
 from claims_data import claims_data
 
@@ -19,12 +19,9 @@ async def scalar_html():
 
 
 @app.get("/get/claims")
-async def get_claims(id: int | None = None) -> dict:
-    print(len(claims_data))
-    for k, v in claims_data.items():
-        print(f"ID: {k} | Date Type: {type(v['ClaimDate'])}")
+async def get_claims(id: int | None = None) -> ClaimResponse:
     if claim_exists(id):
-        return {"ClaimId": id, **claims_data[id]}
+        return ClaimResponse(**{"ClaimId": id, **claims_data[id]})
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
