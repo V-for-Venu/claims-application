@@ -21,3 +21,15 @@ class ClaimResponse(BaseModel):
     ClaimAmount: float
     ClaimStatus: ClaimStatus
     ClaimDate: date
+
+    @classmethod
+    def from_claim_tuple(cls, row: tuple):
+        if not row:
+            return None
+        return cls(
+            ClaimId=row[0],
+            ClaimName=row[1],
+            ClaimAmount=row[2],
+            ClaimStatus=row[3],
+            ClaimDate=row[4]
+        )

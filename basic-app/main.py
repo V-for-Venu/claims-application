@@ -4,7 +4,9 @@ import random
 from claims_data_model import AddClaimData, ClaimResponse
 from utils import claim_exists
 from claims_data import claims_data
+from database import Database
 
+db = Database()
 app = FastAPI()
 
 
@@ -20,8 +22,13 @@ async def scalar_html():
 
 @app.get("/get/claims")
 async def get_claims(id: int | None = None) -> ClaimResponse:
-    if claim_exists(id):
-        return ClaimResponse(**{"ClaimId": id, **claims_data[id]})
+    result = db.get_claims(id)
+
+    # if claim_exists(id):
+    #     return ClaimResponse(**{"ClaimId": id, **claims_data[id]})
+    
+    if result:
+        return ClaimResponse.from_claim_tuple(result)    
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -31,11 +38,25 @@ async def get_claims(id: int | None = None) -> ClaimResponse:
 
 @app.post("/add/claims")
 async def add_claims(claim_data: AddClaimData) -> dict:
-    while (new_claim_id := random.randint(10000, 99999)) in claims_data:
-        pass
+
+    # while (new_claim_id := random.randint(10000, 99999)) in claims_data:
+    #     pass
+
+    # try:
+    #     claims_data[new_claim_id] = claim_data.model_dump()
+    #     return {"message": f"Claim Addedd Successfully with ID: {new_claim_id}"}
+
     try:
-        claims_data[new_claim_id] = claim_data.model_dump()
-        return {"message": f"Claim Addedd Successfully with ID: {new_claim_id}"}
+        result = db.add_claim(claim_data)
+        if result:
+            return {
+                "message": f"Claim Created Successfully with ID: {result} "
+            }
+        else:
+            return HTTPException(
+                status_code= status.HTTP_404_NOT_FOUND,
+                detail=f"Unable to create Claim, Refer to message {result}"
+            )
 
     except Exception as e:
         raise HTTPException(
@@ -58,29 +79,59 @@ async def update_claims(id: int, new_claim_record: AddClaimData) -> dict:
             detail = "Claim ID not found. Please provide a valid Claim ID."
         )
 
+
 @app.patch("/update/claims/status")
 async def update_claim_status(id: int, status: str) -> dict:
-    if claim_exists(id):
-        if status in ["Approved", "Rejected", "Pending"]:
-            claims_data[id]["ClaimStatus"] = status
-            return {"message": f"Claim Status Updated Successfully to {status}"}
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid Claim Status. Please provide a valid status: Approved, Rejected, or Pending."
-            )
+
+    try:
+        if status in ["Approved", "Rejected", "Pending"] and not db.update_claim(id, status):
+            return {
+                "message": "Claim Updated Successfully.."
+            }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unable to Update Claim Status, Please Check Status - {e}"
+        )
+
+    # if claim_exists(id):
+    #     if status in ["Approved", "Rejected", "Pending"]:
+    #         claims_data[id]["ClaimStatus"] = status
+    #         return {"message": f"Claim Status Updated Successfully to {status}"}
+    #     else:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_400_BAD_REQUEST,
+    #             detail="Invalid Claim Status. Please provide a valid status: Approved, Rejected, or Pending."
+    #         )
 
 
 @app.delete("/delete/claims")
 async def delete_claims(id: int) -> dict:
-    if claim_exists(id):
-        del claims_data[id]
-        return {"message": f"Claim Record with ID: {id} Deleted Successfully"}
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail = "Claim ID not found. Please provide a valid Claim ID."
+    result=db.delete_claim(id)
+    print(result)
+    try:
+        result = db.delete_claim(id)
+        if not result:
+            return {
+                "message": "Claim Deleted Successfully"
+            }
+    except Exception as e:
+        return HTTPException(
+            status_code= status.HTTP_404_NOT_FOUND,
+            detail=f"Unable to Delete Claim, Refer to Status - {e}"
+
         )
+
+
+
+    # if claim_exists(id):
+    #     del claims_data[id]
+    #     return {"message": f"Claim Record with ID: {id} Deleted Successfully"}
+    # else:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail = "Claim ID not found. Please provide a valid Claim ID."
+    #     )
 
 
 @app.get("/get/claims/latest")

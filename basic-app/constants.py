@@ -6,17 +6,28 @@ add_claims_url = "http://localhost:8000/add/claims"
 
 # Claim Data Generation Constants
 claim_names = [
-    "Annual Physical Examination",
-    "Full Body Health Checkup",
-    "Routine Dental Checkup & Cleaning",
-    "Dental Cavity Filling",
-    "Comprehensive Eye Examination",
-    "Prescription Eyeglasses Invoicing",
-    "Complete Blood Count (CBC) Lab Test",
-    "Chest X-Ray Digital Imaging",
-    "Chronic Medication Prescription Refill",
-    "Emergency Room Acute Care"
+    "Full Body Checkup",
+    "Routine Blood Test",
+    "Dental Checkup",
+    "Tooth Extraction",
+    "Chest X-Ray",
+    "Brain MRI Scan",
+    "Eye Examination",
+    "Doctor Consultation",
+    "Prescription Medicine",
+    "Physical Therapy",
+    "Heart ECG Test",
+    "Ultrasound Scan",
+    "Cavity Filling",
+    "Flu Vaccination",
+    "Skin Clinic Visit",
+    "Emergency Room Care",
+    "Allergy Testing",
+    "Spine CT Scan",
+    "Diabetes Screening",
+    "Surgical Consultation"
 ]
+
 
 claim_status = [
     "Pending",
