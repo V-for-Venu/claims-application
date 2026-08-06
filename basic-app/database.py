@@ -74,6 +74,36 @@ class Database:
         self.cursor.execute(delete_query)
         self.conn.commit()
 
+    def get_latest_claims(self):
+        latest_claim = """
+        SELECT * FROM claims_basic where claimid in 
+        (
+            SELECT MAX(claimId) from claims_basic
+        )
+        """
+        result = self.cursor.execute(latest_claim)
+        return result.fetchone()
+
+    def get_total_claims(self):
+        total_claims = """
+        SELECT COUNT(*) FROM claims_basic
+        """
+        total_sum_claims = """
+        SELECT SUM(claimAmount) from claims_basic
+        """
+        total_claims  = self.cursor.execute(total_claims)
+        total_claims = total_claims.fetchone()
+        total_sum_claims =  self.cursor.execute(total_sum_claims)
+        total_sum_claims = total_sum_claims.fetchone()
+        return total_claims[0], total_sum_claims[0]
+
+    def get_all_claimIds(self):
+        all_claims = """
+        SELECT claimId from claims_basic
+        """
+        all_claims = self.cursor.execute(all_claims)
+        return all_claims.fetchall()
+
     def close_connection(self):
         self.conn.close()
 

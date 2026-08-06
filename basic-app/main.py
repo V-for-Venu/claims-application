@@ -24,6 +24,7 @@ async def scalar_html():
 async def get_claims(id: int | None = None) -> ClaimResponse:
     result = db.get_claims(id)
 
+    # -- Static Data Code -- #
     # if claim_exists(id):
     #     return ClaimResponse(**{"ClaimId": id, **claims_data[id]})
     
@@ -39,6 +40,8 @@ async def get_claims(id: int | None = None) -> ClaimResponse:
 @app.post("/add/claims")
 async def add_claims(claim_data: AddClaimData) -> dict:
 
+    # -- Static Data Code -- #
+    
     # while (new_claim_id := random.randint(10000, 99999)) in claims_data:
     #     pass
 
@@ -67,6 +70,7 @@ async def add_claims(claim_data: AddClaimData) -> dict:
 
 @app.put("/update/claims")
 async def update_claims(id: int, new_claim_record: AddClaimData) -> dict:
+
     if claim_exists(id):
         try:
             claims_data[id] = new_claim_record.model_dump()
@@ -94,6 +98,8 @@ async def update_claim_status(id: int, status: str) -> dict:
             detail=f"Unable to Update Claim Status, Please Check Status - {e}"
         )
 
+    # -- Static Data Code -- #
+    
     # if claim_exists(id):
     #     if status in ["Approved", "Rejected", "Pending"]:
     #         claims_data[id]["ClaimStatus"] = status
@@ -122,8 +128,8 @@ async def delete_claims(id: int) -> dict:
 
         )
 
-
-
+    # -- Static Data Code -- #
+    
     # if claim_exists(id):
     #     del claims_data[id]
     #     return {"message": f"Claim Record with ID: {id} Deleted Successfully"}
@@ -135,20 +141,26 @@ async def delete_claims(id: int) -> dict:
 
 
 @app.get("/get/claims/latest")
-async def get_latest_claim() -> dict:
-    latest_claim_id = max(
-        claims_data.keys(), 
-        key=lambda k: claims_data[k]["ClaimDate"])
-    return {"ClaimId": latest_claim_id, **claims_data[latest_claim_id]}
+async def get_latest_claim() -> ClaimResponse:
+    return ClaimResponse.from_claim_tuple(db.get_latest_claims())
 
+    # -- Static Data Code -- #
+    
+    # latest_claim_id = max(
+    #     claims_data.keys(), 
+    #     key=lambda k: claims_data[k]["ClaimDate"])
+    # return {"ClaimId": latest_claim_id, **claims_data[latest_claim_id]}
 
 @app.get("/get/claims/total")
 async def get_total_claims() -> dict:
+    total_claims, total_claims_amount = db.get_total_claims()
     return {
-        "total_claims_count": len(claims_data)
+        "Total Claims": total_claims,
+        "Total Claims Amount": total_claims_amount
     }
 
 
 @app.get("/get/all/claimIds")
 async def get_all_claim_ids():
-    return {"claim_ids": list(claims_data.keys())}
+    result =  db.get_all_claimIds()
+    return {"claim_ids": [i[0] for i in result]}
