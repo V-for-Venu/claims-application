@@ -14,7 +14,9 @@ class ClaimStatus(Enum):
 class AddClaimData(BaseModel):
     ClaimName: str
     ClaimAmount: float
-    ClaimDate: datetime = Field(default=(datetime.now(tz=timezone.utc)-timedelta(days=90)))
+    ClaimDate: datetime = Field(
+        default=(datetime.now(tz=timezone.utc) - timedelta(days=90))
+    )
 
 
 class ClaimResponse(BaseModel):
@@ -23,6 +25,7 @@ class ClaimResponse(BaseModel):
     ClaimAmount: float
     ClaimStatus: ClaimStatus
     ClaimDate: datetime
+    ClaimCloseEstimation: datetime
 
     @classmethod
     def from_claim_tuple(cls, row: tuple):
@@ -32,6 +35,7 @@ class ClaimResponse(BaseModel):
             ClaimId=row[0],
             ClaimName=row[1],
             ClaimAmount=row[2],
-            ClaimStatus=row[3],
-            ClaimDate=row[4]
+            ClaimDate=row[3],
+            ClaimStatus=row[4],
+            ClaimCloseEstimation=row[5],
         )

@@ -1,4 +1,3 @@
-
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 
@@ -14,6 +13,7 @@ from utils import claim_exists
 
 db = Database()
 
+
 @asynccontextmanager
 async def lifespan_handler(app: FastAPI):
     print(panel.Panel("...Server Started...", border_style="green"))
@@ -22,7 +22,9 @@ async def lifespan_handler(app: FastAPI):
     yield
     print(panel.Panel("...Server Stopped...", border_style="red"))
 
+
 app = FastAPI(lifespan=lifespan_handler)
+
 
 @app.get("/health")
 def health_check():
@@ -36,24 +38,23 @@ async def scalar_html():
 
 @app.get("/get/claims")
 async def get_claims(id: int, session: SessionDep) -> dict:
-    
+
     claim_data = session.get(Claims, id)
     if claim_data:
         return claim_data.model_dump()
     else:
         raise HTTPException(
-            detail="Claim not found in DB...",
-            status_code=status.HTTP_404_NOT_FOUND
+            detail="Claim not found in DB...", status_code=status.HTTP_404_NOT_FOUND
         )
 
     # -- Static Data Code -- #
     # if claim_exists(id):
     #     return ClaimResponse(**{"ClaimId": id, **claims_data[id]})
-    
+
     # ____ DB Access with Plain SQL Queries and Classes ____
     # result = db.get_claims(id)
     # if result:
-    #     return ClaimResponse.from_claim_tuple(result)    
+    #     return ClaimResponse.from_claim_tuple(result)
     # else:
     #     raise HTTPException(
     #         status_code=status.HTTP_404_NOT_FOUND,
@@ -66,19 +67,16 @@ async def add_claims(claim_data: AddClaimData, session: SessionDep) -> dict:
 
     new_claim = Claims(
         **claim_data.model_dump(),
-        ClaimStatus= ClaimStatus.Initiated.value,
-        ClaimCloseEstimation= datetime.now(timezone.utc) + timedelta(10)
+        ClaimStatus=ClaimStatus.Initiated.value,
+        ClaimCloseEstimation=datetime.now(timezone.utc) + timedelta(10),
     )
     print(new_claim)
     session.add(new_claim)
     session.commit()
-    return {
-        "detail": "Claim Created Succesfully",
-        "claim_details": new_claim.ClaimId
-    }
-    
+    return {"detail": "Claim Created Succesfully", "claim_details": new_claim.ClaimId}
+
     # -- Static Data Code -- #
-    
+
     # while (new_claim_id := random.randint(10000, 99999)) in claims_data:
     #     pass
 
@@ -106,7 +104,6 @@ async def add_claims(claim_data: AddClaimData, session: SessionDep) -> dict:
     #     )
 
 
-
 # ___ TESTING PUT - NOT REQUIRED ____
 @app.put("/update/claims")
 async def update_claims(id: int, new_claim_record: AddClaimData) -> dict:
@@ -114,31 +111,28 @@ async def update_claims(id: int, new_claim_record: AddClaimData) -> dict:
     if claim_exists(id):
         try:
             claims_data[id] = new_claim_record.model_dump()
-            return {"message" : "Claim Record Updated Successfully"}
+            return {"message": "Claim Record Updated Successfully"}
         except Exception as e:  # noqa: BLE001
             return {"message": f"Error while Updating Claim Record: {e}"}
     else:
         raise HTTPException(
-            status_code = status.HTTP_404_NOT_FOUND,
-            detail = "Claim ID not found. Please provide a valid Claim ID."
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Claim ID not found. Please provide a valid Claim ID.",
         )
 
 
 @app.patch("/update/claims/status")
 async def update_claim_status(id: int, claim_status: str, session: SessionDep) -> dict:
 
-    claim_data = session.get(Claims,id)
+    claim_data = session.get(Claims, id)
     if claim_data:
         claim_data.ClaimStatus = claim_status
         session.commit()
-        return {
-            "detail": "Claim Updated Successfully"
-        }
+        return {"detail": "Claim Updated Successfully"}
 
     else:
         raise HTTPException(
-            detail="Claim not found in DB...",
-            status_code=status.HTTP_404_NOT_FOUND
+            detail="Claim not found in DB...", status_code=status.HTTP_404_NOT_FOUND
         )
 
     # ____ DB Access with Plain SQL Queries and Classes ____
@@ -155,7 +149,7 @@ async def update_claim_status(id: int, claim_status: str, session: SessionDep) -
     #     )
 
     # -- Static Data Code -- #
-    
+
     # if claim_exists(id):
     #     if status in ["Approved", "Rejected", "Pending"]:
     #         claims_data[id]["ClaimStatus"] = status
@@ -170,21 +164,17 @@ async def update_claim_status(id: int, claim_status: str, session: SessionDep) -
 @app.delete("/delete/claims")
 async def delete_claims(id: int, session: SessionDep) -> dict:
 
-    claims_data = session.get(Claims,id)
+    claims_data = session.get(Claims, id)
     if claims_data:
         session.delete(claims_data)
         session.commit()
-        return {
-            "detail": "Claim Deleted Successfully.."
-        }
+        return {"detail": "Claim Deleted Successfully.."}
     else:
         raise HTTPException(
-            detail="Claim not found in DB...",
-            status_code=status.HTTP_404_NOT_FOUND
+            detail="Claim not found in DB...", status_code=status.HTTP_404_NOT_FOUND
         )
 
-
-    session.delete(Claims,id)
+    session.delete(Claims, id)
 
     # ____ DB Access with Plain SQL Queries and Classes ____
 
@@ -203,7 +193,7 @@ async def delete_claims(id: int, session: SessionDep) -> dict:
     #     )
 
     # -- Static Data Code -- #
-    
+
     # if claim_exists(id):
     #     del claims_data[id]
     #     return {"message": f"Claim Record with ID: {id} Deleted Successfully"}
@@ -219,22 +209,20 @@ async def get_latest_claim(session: SessionDep) -> ClaimResponse:
     return ClaimResponse.from_claim_tuple(db.get_latest_claims())
 
     # -- Static Data Code -- #
-    
+
     # latest_claim_id = max(
-    #     claims_data.keys(), 
+    #     claims_data.keys(),
     #     key=lambda k: claims_data[k]["ClaimDate"])
     # return {"ClaimId": latest_claim_id, **claims_data[latest_claim_id]}
+
 
 @app.get("/get/claims/total")
 async def get_total_claims(session: SessionDep) -> dict:
     total_claims, total_claims_amount = db.get_total_claims()
-    return {
-        "Total Claims": total_claims,
-        "Total Claims Amount": total_claims_amount
-    }
+    return {"Total Claims": total_claims, "Total Claims Amount": total_claims_amount}
 
 
 @app.get("/get/all/claimIds")
 async def get_all_claim_ids(session: SessionDep):
-    result =  db.get_all_claimIds()
+    result = db.get_all_claimIds()
     return {"claim_ids": [i[0] for i in result]}

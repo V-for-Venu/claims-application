@@ -2,5 +2,9 @@
 .venv
 .venv/
 basic-app/__pycache__
-*.pyc
 .vscode
+# Python bytecode cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

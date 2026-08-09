@@ -25,18 +25,17 @@ claim_names = [
     "Allergy Testing",
     "Spine CT Scan",
     "Diabetes Screening",
-    "Surgical Consultation"
+    "Surgical Consultation",
 ]
 
 
-claim_status = [
-    "Pending",
-    "Approved",
-    "Rejected"
-]
+claim_status = ["Pending", "Approved", "Rejected"]
+
+table_name = "claims"
+
 
 def random_date_last_90_days():
     """
     Generates Random date within Last 90 Days from Today
     """
-    return (datetime.now(tz=timezone.utc) - timedelta(days=randint(1, 90)))
+    return datetime.now(tz=timezone.utc) - timedelta(days=randint(1, 90))

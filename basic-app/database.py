@@ -1,7 +1,14 @@
 import sqlite3
 from random import choice, randint
 
-from constants import claim_names, claim_status, random_date_last_90_days
+from constants import (
+    claim_names,
+    claim_status,
+    random_date_last_90_days,
+)
+from constants import (
+    table_name as table,
+)
 
 
 class Database:
@@ -9,7 +16,6 @@ class Database:
         self.conn = sqlite3.connect("new_database/claims.db")
         self.cursor = self.conn.cursor()
         self.create_table("claims_basic")
-
 
     def create_table(self, table_name):
         """
@@ -44,12 +50,15 @@ class Database:
         INSERT INTO claims_basic (ClaimName, ClaimAmount, ClaimStatus, ClaimDate)
         VALUES (?, ?, ?, ?)
         """
-        self.cursor.execute(insert_query, (
-            claim_data.ClaimName,
-            claim_data.ClaimAmount,
-            claim_data.ClaimStatus.value,
-            claim_data.ClaimDate.isoformat()
-        ))
+        self.cursor.execute(
+            insert_query,
+            (
+                claim_data.ClaimName,
+                claim_data.ClaimAmount,
+                claim_data.ClaimStatus.value,
+                claim_data.ClaimDate.isoformat(),
+            ),
+        )
         self.conn.commit()
         return self.cursor.lastrowid
 
@@ -65,7 +74,7 @@ class Database:
         self.cursor.execute(update_query, (claim_id, claim_status))
         self.conn.commit()
 
-    def delete_claim(self,claim_id):
+    def delete_claim(self, claim_id):
         """
         Deletes a Claim Record from the Database
         """
@@ -77,40 +86,37 @@ class Database:
         self.conn.commit()
 
     def get_latest_claims(self):
-        latest_claim = """
-        SELECT * FROM claims_basic where claimid in 
+        latest_claim = f"""
+        SELECT * FROM {table} where claimid in 
         (
-            SELECT MAX(claimId) from claims_basic
+            SELECT MAX(claimId) from {table}
         )
         """
         result = self.cursor.execute(latest_claim)
         return result.fetchone()
 
     def get_total_claims(self):
-        total_claims = """
-        SELECT COUNT(*) FROM claims_basic
+        total_claims = f"""
+        SELECT COUNT(*) FROM {table}
         """
-        total_sum_claims = """
-        SELECT SUM(claimAmount) from claims_basic
+        total_sum_claims = f"""
+        SELECT SUM(claimAmount) from {table}
         """
-        total_claims  = self.cursor.execute(total_claims)
+        total_claims = self.cursor.execute(total_claims)
         total_claims = total_claims.fetchone()
-        total_sum_claims =  self.cursor.execute(total_sum_claims)
+        total_sum_claims = self.cursor.execute(total_sum_claims)
         total_sum_claims = total_sum_claims.fetchone()
         return total_claims[0], total_sum_claims[0]
 
     def get_all_claimIds(self):
-        all_claims = """
-        SELECT claimId from claims_basic
+        all_claims = f"""
+        SELECT claimId from {table}
         """
         all_claims = self.cursor.execute(all_claims)
         return all_claims.fetchall()
 
     def close_connection(self):
         self.conn.close()
-
-    
-
 
 
 def random_data_generator(n):
@@ -128,12 +134,11 @@ def random_data_generator(n):
     )
     """
 
-    result = cursor.execute(create_table) # Table Already Created so No Response
+    result = cursor.execute(create_table)  # Table Already Created so No Response
 
     # print(result.fetchall())
 
     for _ in range(n):
-
         insert_data = """
         INSERT INTO claims_basic (ClaimName, ClaimAmount, ClaimStatus, ClaimDate)
         VALUES (?, ?, ?, ?)
@@ -145,13 +150,15 @@ def random_data_generator(n):
                 choice(claim_names),
                 randint(100, 599),
                 choice(claim_status),
-                random_date_last_90_days().isoformat()
-            )
+                random_date_last_90_days().isoformat(),
+            ),
         )
 
-        print(result.fetchall()) if result.fetchall() else print("Data Inserted Successfully:")
+        print(result.fetchall()) if result.fetchall() else print(
+            "Data Inserted Successfully:"
+        )
         conn.commit()
-    
+
     conn.close()
     return "Connection Closed Successfully, Data Generated..!!"
 
