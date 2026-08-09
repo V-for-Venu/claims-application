@@ -1,16 +1,16 @@
-from datetime import datetime, timedelta
-from fastapi import FastAPI, HTTPException, status, Depends
-from scalar_fastapi import get_scalar_api_reference
-import random
-from claims_data_model import AddClaimData, ClaimResponse, ClaimStatus
-from utils import claim_exists
-from claims_data import claims_data
-from database import Database
+
 from contextlib import asynccontextmanager
-from rich import print, panel
-from new_database.session import create_db_tables, SessionDep
+from datetime import datetime, timedelta, timezone
+
+from claims_data import claims_data
+from claims_data_model import AddClaimData, ClaimResponse, ClaimStatus
+from database import Database
+from fastapi import FastAPI, HTTPException, status
 from new_database.claims_sql_data_model import Claims
-from sqlmodel import Session
+from new_database.session import SessionDep, create_db_tables
+from rich import panel, print
+from scalar_fastapi import get_scalar_api_reference
+from utils import claim_exists
 
 db = Database()
 
@@ -67,7 +67,7 @@ async def add_claims(claim_data: AddClaimData, session: SessionDep) -> dict:
     new_claim = Claims(
         **claim_data.model_dump(),
         ClaimStatus= ClaimStatus.Initiated.value,
-        ClaimCloseEstimation= datetime.now() + timedelta(10)
+        ClaimCloseEstimation= datetime.now(timezone.utc) + timedelta(10)
     )
     print(new_claim)
     session.add(new_claim)
@@ -115,8 +115,8 @@ async def update_claims(id: int, new_claim_record: AddClaimData) -> dict:
         try:
             claims_data[id] = new_claim_record.model_dump()
             return {"message" : "Claim Record Updated Successfully"}
-        except Exception as e:
-            return {"message": f"Error while Updating Claim Record: {str(e)}"}
+        except Exception as e:  # noqa: BLE001
+            return {"message": f"Error while Updating Claim Record: {e}"}
     else:
         raise HTTPException(
             status_code = status.HTTP_404_NOT_FOUND,

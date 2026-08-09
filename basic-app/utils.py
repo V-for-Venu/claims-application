@@ -1,15 +1,17 @@
-from claims_data import claims_data
-from requests import Session
-from constants import add_claims_url, claim_names, claim_status
-from random import choice, random, randint
-from datetime import date, timedelta
 import time
+from datetime import datetime, timedelta, timezone
+from random import choice, randint, random
+
+from claims_data import claims_data
+from constants import add_claims_url, claim_names, claim_status
+from requests import Session
+
 
 def claim_exists(claim_id: int) -> bool:
     """
     Check if Claim ID Exists in claims_data.
     """
-    return claim_id in claims_data.keys()
+    return claim_id in claims_data
 
 
 def generate_data(n=5):
@@ -22,7 +24,7 @@ def generate_data(n=5):
                 "ClaimName": choice(claim_names),
                 "ClaimAmount": round(random() * 100, 2),
                 "ClaimStatus": choice(claim_status),
-                "ClaimDate": (date.today() - timedelta(days=randint(1, 90))).isoformat()
+                "ClaimDate": (datetime.now(tz=timezone.utc) - timedelta(days=randint(1, 90))).isoformat()
             }
             time.sleep(0.5)
             try:
@@ -31,8 +33,8 @@ def generate_data(n=5):
                     print(response.json()['message'])
                 else:
                     print(f"Error Adding Claims: {response.status_code} - {response.text}")
-            except Exception as e:
-                print(f"Error occurred while adding Claims: {str(e)}")
+            except Exception as e:  # noqa: BLE001
+                print(f"Error occurred while adding Claims: {e}")
                 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field
+from datetime import datetime, timedelta, timezone
 from enum import Enum
-from datetime import datetime, timedelta
+
+from pydantic import BaseModel, Field
+
 
 class ClaimStatus(Enum):
     Approved = "Approved"
@@ -12,7 +14,7 @@ class ClaimStatus(Enum):
 class AddClaimData(BaseModel):
     ClaimName: str
     ClaimAmount: float
-    ClaimDate: datetime = Field(default=(datetime.today()-timedelta(days=90)))
+    ClaimDate: datetime = Field(default=(datetime.now(tz=timezone.utc)-timedelta(days=90)))
 
 
 class ClaimResponse(BaseModel):

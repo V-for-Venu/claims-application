@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import datetime, timedelta, timezone
 from random import randint
 
 # Basic APP Local Host URLs
@@ -39,4 +39,4 @@ def random_date_last_90_days():
     """
     Generates Random date within Last 90 Days from Today
     """
-    return (date.today() - timedelta(days=randint(1, 90)))
+    return (datetime.now(tz=timezone.utc) - timedelta(days=randint(1, 90)))

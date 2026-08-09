@@ -1,6 +1,8 @@
 import sqlite3
-from constants import claim_names, claim_status, random_date_last_90_days
 from random import choice, randint
+
+from constants import claim_names, claim_status, random_date_last_90_days
+
 
 class Database:
     def __init__(self):
@@ -55,7 +57,7 @@ class Database:
         """
         Updates the Claim status of Existing Claim Record in DB
         """
-        update_query = f"""
+        update_query = """
         UPDATE claims_basic
         SET claimStatus = ?
         WHERE claimId = ?

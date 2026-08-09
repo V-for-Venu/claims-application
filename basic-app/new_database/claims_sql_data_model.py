@@ -1,7 +1,8 @@
-from pydantic import field_serializer
-from sqlmodel import SQLModel, Field
-from enum import Enum
 from datetime import datetime
+from enum import Enum
+
+from pydantic import field_serializer
+from sqlmodel import Field, SQLModel
 
 
 class ClaimStatus(Enum):
@@ -13,7 +14,7 @@ class ClaimStatus(Enum):
 
 class Claims(SQLModel, table=True):
     __tablename__ = "claims"
-    
+
     ClaimId: int = Field(primary_key=True)
     ClaimName: str
     ClaimAmount: float
