@@ -17,6 +17,9 @@ class AddClaimData(BaseModel):
     ClaimDate: datetime = Field(
         default=(datetime.now(tz=timezone.utc) - timedelta(days=90))
     )
+    ClaimCloseEstimation: datetime = Field(
+        default=(datetime.now(tz=timezone.utc) + timedelta(days=10))
+    )
 
 
 class ClaimResponse(BaseModel):

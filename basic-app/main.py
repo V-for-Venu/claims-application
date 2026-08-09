@@ -18,7 +18,6 @@ db = Database()
 async def lifespan_handler(app: FastAPI):
     print(panel.Panel("...Server Started...", border_style="green"))
     create_db_tables()
-    print("DB Tables Created Successfully...")
     yield
     print(panel.Panel("...Server Stopped...", border_style="red"))
 
@@ -68,12 +67,16 @@ async def add_claims(claim_data: AddClaimData, session: SessionDep) -> dict:
     new_claim = Claims(
         **claim_data.model_dump(),
         ClaimStatus=ClaimStatus.Initiated.value,
-        ClaimCloseEstimation=datetime.now(timezone.utc) + timedelta(10),
     )
-    print(new_claim)
-    session.add(new_claim)
-    session.commit()
-    return {"detail": "Claim Created Succesfully", "claim_details": new_claim.ClaimId}
+    try:
+        session.add(new_claim)
+        session.commit()
+        return {"detail": f"Claim Created Succesfully with Id: {new_claim.ClaimId}"}
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(
+            detail=f"Error while Adding Claim, refer to this Image {e}",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
     # -- Static Data Code -- #
 
@@ -220,7 +223,10 @@ async def get_latest_claim(session: SessionDep) -> ClaimResponse:
 @app.get("/get/claims/total")
 async def get_total_claims(session: SessionDep) -> dict:
     total_claims, total_claims_amount = db.get_total_claims()
-    return {"Total Claims": total_claims, "Total Claims Amount": total_claims_amount}
+    return {
+        "Total Claims": total_claims,
+        "Total Claims Amount": round(total_claims_amount, 3),
+    }
 
 
 @app.get("/get/all/claimIds")
