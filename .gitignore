@@ -2,3 +2,5 @@
 .venv
 .venv/
 basic-app/__pycache__
+*.pyc
+.vscode

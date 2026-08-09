@@ -1,11 +1,23 @@
+from typing import Annotated
+from fastapi import Depends
 from sqlalchemy import create_engine
-from sqlmodel import SQLModel
-from claims_sql_data_model import Claims
+from sqlmodel import SQLModel, Session
+from .claims_sql_data_model import Claims
 
 engine = create_engine(
-    "sqlite:///claims.db", 
+    "sqlite:///new_database/claims.db", 
     echo=True, 
     connect_args={"check_same_thread": False}
 )
 
-SQLModel.metadata.create_all(bind=engine)
+def create_db_tables():
+    SQLModel.metadata.create_all(bind=engine)
+
+def get_db_session():
+    with Session(bind=engine) as session:
+        print("DB Session Yielded Sucessfully...")
+        yield session
+        print("DB Session Closed Successfully...")
+
+
+SessionDep = Annotated[Session, Depends(get_db_session)]
