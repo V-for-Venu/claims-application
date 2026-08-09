@@ -3,8 +3,15 @@
 .venv/
 basic-app/__pycache__
 .vscode
+
 # Python bytecode cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.db
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3

@@ -208,12 +208,13 @@ async def delete_claims(id: int, session: SessionDep) -> dict:
 async def get_latest_claim(session: SessionDep) -> ClaimResponse:
     return ClaimResponse.from_claim_tuple(db.get_latest_claims())
 
-    # -- Static Data Code -- #
 
-    # latest_claim_id = max(
-    #     claims_data.keys(),
-    #     key=lambda k: claims_data[k]["ClaimDate"])
-    # return {"ClaimId": latest_claim_id, **claims_data[latest_claim_id]}
+# -- Static Data Code -- #
+
+# latest_claim_id = max(
+#     claims_data.keys(),
+#     key=lambda k: claims_data[k]["ClaimDate"])
+# return {"ClaimId": latest_claim_id, **claims_data[latest_claim_id]}
 
 
 @app.get("/get/claims/total")
