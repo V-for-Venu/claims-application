@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 
 
 class ClaimStatus(Enum):
@@ -42,3 +42,8 @@ class ClaimResponse(BaseModel):
             ClaimStatus=row[4],
             ClaimCloseEstimation=row[5],
         )
+
+    # Format ClaimDate and ClaimCloseEstimation
+    @field_serializer("ClaimDate", "ClaimCloseEstimation")
+    def serialize_claim_date(self, dt: datetime) -> str:
+        return dt.strftime("%d %b %Y, %I:%M %p")

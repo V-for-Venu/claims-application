@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta, timezone
 
 from claims_data import claims_data
 from claims_data_model import AddClaimData, ClaimResponse, ClaimStatus
@@ -36,7 +35,7 @@ async def scalar_html():
 
 
 @app.get("/get/claims")
-async def get_claims(id: int, session: SessionDep) -> dict:
+async def get_claims(id: int, session: SessionDep):
 
     claim_data = session.get(Claims, id)
     if claim_data:
