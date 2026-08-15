@@ -24,6 +24,7 @@ async def start_cafe():
     print("~~~~~ Opening Cafe ~~~~~")
 
     # Version::1
+    print("~~~~~ Version 1 - Using Create Task ~~~~~")
     start = time.perf_counter()
 
     # Synchronous Programming
@@ -49,6 +50,7 @@ async def start_cafe():
     print(f"Total Time to Complete Orders: {round(end - start, 2)}")
 
     # Version::2
+    print("~~~~~ Version 2 - Using Batching - Gather ~~~~~")
     start = time.perf_counter()
     results = await asyncio.gather(
         make_coffee(),
@@ -61,6 +63,19 @@ async def start_cafe():
     end = time.perf_counter()
     print(f"Total Time to Complete Order: {round(end - start, 2)}")
     print(f"Results List - {results}")
+
+    ## Version:3
+    print("~~~~~ Version 3 - Using Task Group ~~~~~")
+    start = time.perf_counter()
+    async with asyncio.TaskGroup() as task_group:
+        tasks = []
+        for _ in range(3):
+            tasks.append(task_group.create_task(make_coffee()))
+            tasks.append(task_group.create_task(make_toast()))
+    end = time.perf_counter()
+    print(f"Total Time to Complete Order: {round(end - start, 2)}")
+    print(f"Results List - {tasks[0].result()}")
+    end = time.perf_counter()
 
 
 if __name__ == "__main__":
