@@ -1,4 +1,5 @@
 #Ignoring virtual environment folder
+.env
 .venv
 .venv/
 basic-app/__pycache__

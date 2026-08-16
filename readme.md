@@ -12,3 +12,5 @@
  - Stable Version of the FastAPI Application
  - Used sqlite3 for Database Operations
  - Using SQL Model for DB CRUD Operations for Persistent Data
+ - Mini DE Project - Created Pipelines using Prefect.
+![alt text](v1.0.1.png)
