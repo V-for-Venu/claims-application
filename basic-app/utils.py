@@ -1,9 +1,16 @@
 import time
 from datetime import datetime, timedelta, timezone
 from random import choice, randint, random
+from uuid import uuid4
 
 from claims_data import claims_data
-from constants import add_claims_url, claim_names, claim_status
+from constants import (
+    add_claims_url,
+    claim_names,
+    claim_status,
+    claim_TPA,
+    place_of_service,
+)
 from requests import Session
 
 
@@ -30,6 +37,10 @@ def generate_data(n=5):
                 "ClaimCloseEstimation": (
                     datetime.now(tz=timezone.utc) + timedelta(days=randint(1, 90))
                 ).isoformat(),
+                "ClaimTPA": choice(claim_TPA),
+                "ClaimUniqueId": str(uuid4()),
+                "ClaimTin": f"{randint(100000000, 999999999)}",
+                "ClaimPlaceOfService": choice(place_of_service),
             }
             time.sleep(0.5)
             try:

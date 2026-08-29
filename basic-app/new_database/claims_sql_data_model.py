@@ -21,6 +21,10 @@ class Claims(SQLModel, table=True):
     ClaimDate: datetime
     ClaimStatus: ClaimStatus
     ClaimCloseEstimation: datetime
+    ClaimTPA: str
+    ClaimUniqueId: str
+    ClaimTin: str
+    ClaimPlaceOfService: str
 
     # Format ClaimDate and ClaimCloseEstimation
     @field_serializer("ClaimDate", "ClaimCloseEstimation")

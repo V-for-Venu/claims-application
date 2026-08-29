@@ -10,6 +10,17 @@ from constants import (
     table_name as table,
 )
 
+# Table Dropping Code
+
+
+def drop_table():
+    conn = sqlite3.connect("new_database/claims.db")
+    cursor = conn.cursor()
+    cursor.execute("drop table claims")
+    conn.commit()
+    conn.close()
+    return "Table Dropped Successfully..."
+
 
 class Database:
     def __init__(self):

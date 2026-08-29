@@ -20,6 +20,10 @@ class AddClaimData(BaseModel):
     ClaimCloseEstimation: datetime = Field(
         default=(datetime.now(tz=timezone.utc) + timedelta(days=10))
     )
+    ClaimTPA: str
+    ClaimUniqueId: str
+    ClaimTin: str
+    ClaimPlaceOfService: str
 
 
 class ClaimResponse(BaseModel):
@@ -29,6 +33,10 @@ class ClaimResponse(BaseModel):
     ClaimStatus: ClaimStatus
     ClaimDate: datetime
     ClaimCloseEstimation: datetime
+    ClaimUniqueId: str
+    ClaimPlaceOfService: str
+    ClaimTPA: str
+    ClaimTin: str
 
     @classmethod
     def from_claim_tuple(cls, row: tuple):
@@ -41,6 +49,10 @@ class ClaimResponse(BaseModel):
             ClaimDate=row[3],
             ClaimStatus=row[4],
             ClaimCloseEstimation=row[5],
+            ClaimTPA=row[6],
+            ClaimUniqueId=row[7],
+            ClaimTin=row[8],
+            ClaimPlaceOfService=row[9],
         )
 
     # Format ClaimDate and ClaimCloseEstimation

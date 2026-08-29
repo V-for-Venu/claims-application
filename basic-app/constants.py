@@ -31,6 +31,10 @@ claim_names = [
 
 claim_status = ["Pending", "Approved", "Rejected"]
 
+claim_TPA = ["Apollo", "Star", "Paramount", "Cigna", "HCL"]
+
+place_of_service = ["Hyderabad", "Ongole", "Goa", "Pune", "Banglore", "Outside India"]
+
 table_name = "claims"
 
 
