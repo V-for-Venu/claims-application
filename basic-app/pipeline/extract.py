@@ -17,9 +17,11 @@ def extract_claims():
     conn = sqlite3.connect(db_path)
     query = f"""
     SELECT * FROM claims WHERE
-    CLAIMDATE > '{watermark}'
+    ClaimAuditTime > '{watermark}'
     """
     df = pd.read_sql_query(query, conn)
     conn.close()
+    if df.empty:
+        print("== Inside Extract Task -- NO NEW DATA FOUND ==")
 
     return df

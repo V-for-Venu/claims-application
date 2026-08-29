@@ -35,7 +35,7 @@ def transform_claims(df):
 
     new_df = df.copy()
     new_df["ClaimMonth"] = pd.to_datetime(df["ClaimDate"])
-    new_df["ClaimMonth"] = new_df["ClaimMonth"].dt.to_period("M")
+    new_df["ClaimMonth"] = new_df["ClaimMonth"].dt.to_period("M").astype(str)
 
     monthly_summary = (
         new_df.groupby("ClaimMonth")

@@ -1,17 +1,174 @@
-# V 1.0 This is a Claims Application for Understanding Medical Claim Insurance
+# Claims Application
 
-## V1.0.0 Highlights
+A learning project built around a **medical insurance claims application**, gradually evolving from a basic FastAPI CRUD application into a broader backend, data engineering, and AI-enabled system.
 
-- Basic Claim Applciation
-- CRUD Operations with Sample Dynamic Data
-- Random Data Generator with End Points
-- CRUD Operations + Total Claim Counter
+The project is intentionally developed in versions, with each version introducing a new engineering concept.
 
-## V1.0.1
+---
 
-- Stable Version of the FastAPI Application
-- Used sqlite3 for Database Operations
-- Using SQL Model for DB CRUD Operations for Persistent Data
-- Mini DE Project - Created Pipelines using Prefect.
+## 🚀 Version 1.0.0 — Basic Claims Application
 
-![alt text](v1.0.1.png)
+- Basic medical insurance claims application.
+- CRUD operations for claim records.
+- Dynamic synthetic claim data generation.
+- Total claim counter.
+- Initial in-memory data handling.
+
+---
+
+## 🚀 Version 1.0.1 — FastAPI + Persistent Database
+
+- Stable FastAPI application with persistent database storage.
+- SQLite database with SQLModel.
+- CRUD APIs for claims.
+
+### Endpoints
+
+| Endpoint | Description |
+| --- | --- |
+| `/get/claims` | Get claim data |
+| `/add/claims` | Add a new claim |
+| `/update/claims` | Update claim status |
+| `/delete/claims` | Delete a claim |
+| `/get/claims/latest` | Get latest claim |
+| `/get/claims/latest_updated` | Get latest updated claim |
+| `/get/claims/total` | Get total claim count and amount |
+| `/get/all/claimIds` | Get all claim IDs |
+
+- Includes a **Synthetic Data Generator** for continuously creating and updating claim records.
+
+---
+
+## 🚀 Data Engineering Pipeline
+
+Added a **Prefect-based micro-batch data pipeline** for processing claims data.
+
+```text
+        Data Generator
+              │
+              ▼
+          SQLite DB
+        (Bronze Layer)
+              │
+        Every 3 minutes
+              ▼
+           Extract
+              │
+              ▼
+          Transform
+       (Pandas Aggregations)
+              │
+              ▼
+            Load
+              │
+              ▼
+       Parquet / Gold Layer
+```
+
+### Pipeline
+
+- Incremental extraction using an audit timestamp watermark.
+- Pandas-based transformations and aggregations.
+- Status, TPA, month, claim type and location level metrics.
+- Timestamped output folders for pipeline runs.
+- Parquet output for analytical data.
+- Prefect used for orchestration and scheduling.
+
+---
+
+## ▶️ Running the Application
+
+### 1. Create Virtual Environment
+
+```bash
+python -m venv .venv
+```
+
+Activate the environment:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Start FastAPI
+
+From the `basic-app` directory:
+
+```bash
+fastapi dev main.py
+```
+
+Open the API documentation:
+
+- Scalar
+
+[Fastapi Scalar Documentation Link](http://localhost:8000/scalar)
+
+---
+
+## ▶️ Running the Data Pipeline
+
+The pipeline and data generator can be run independently from the FastAPI application.
+
+### Terminal 1 — Start Prefect Server
+
+```bash
+prefect server start
+```
+
+### Terminal 2 — Start Claims Pipeline
+
+```bash
+python claims_flow.py
+```
+
+The pipeline is scheduled to run automatically at the configured interval.
+
+### Prefect Dashboard
+
+Open:
+
+[Prefect Dashboard Localhost](http://127.0.0.1:4200/v2/)
+
+The dashboard can be used to view:
+
+- Flow runs
+- Task execution
+- Run status
+- Logs
+- Pipeline history
+
+### Data Generator
+
+Run the synthetic data generator alongside the pipeline to simulate continuously arriving and updated claims data.
+
+---
+
+## 🛠️ Current Tech Stack
+
+- **Python**
+- **FastAPI**
+- **SQLModel**
+- **SQLite**
+- **Pandas**
+- **Prefect**
+- **Parquet**
+
+---
+
+## 🗺️ Roadmap
+
+The application will continue evolving under the same project, with additional concepts introduced incrementally:
+
+- Authentication & Authorization
+- Advanced FastAPI concepts
+- Data Engineering improvements
+- AWS integration
+- GenAI / LLM capabilities
+- Production-oriented architecture

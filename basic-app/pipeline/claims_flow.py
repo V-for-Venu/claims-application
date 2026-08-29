@@ -28,10 +28,11 @@ def update_watermark_task(df):
 def claims_pipeline():
     df = extract_task()
     print("===:: Data Extracted Successfully ::===")
+    print(df)
     if df.empty:
         return "No New Claims Found"
 
-    result = transform_claims(df)
+    result = transform_task(df)
     print("===:: Data Transformed Successfully ::===")
     load_task(result)
     print("===:: Data Loaded Successfully ::===")
@@ -43,4 +44,4 @@ def claims_pipeline():
 
 
 if __name__ == "__main__":
-    claims_pipeline()
+    claims_pipeline.serve(name="claims-pipeline", cron="*/5 * * * *")

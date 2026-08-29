@@ -8,7 +8,7 @@ GOLD_PATH = "data/gold"
 def load_claim_data(results):
 
     # Generate Timestamp for Files and Folder
-    timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d_%H%M%S")
 
     # Generate Runtime Folder
     run_path = Path(GOLD_PATH) / timestamp
@@ -21,7 +21,8 @@ def load_claim_data(results):
 
 
 def update_watermark(df):
-    if not len(df):
+    if df.empty:
+        print("No Upserts Found..!!!")
         return
 
     latest_timestamp = df["ClaimAuditTime"].max()
