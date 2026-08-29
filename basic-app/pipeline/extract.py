@@ -23,8 +23,3 @@ def extract_claims():
     conn.close()
 
     return df
-
-
-df = extract_claims()
-claim_count = df.groupby("ClaimStatus").size()
-print(claim_count)
