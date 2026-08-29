@@ -3,6 +3,8 @@ from random import randint
 
 # Basic APP Local Host URLs
 add_claims_url = "http://localhost:8000/add/claims"
+update_claims_url = "http://localhost:8000/update/claims"
+get_latest_claims_url = "http://localhost:8000/get/claims/latest"
 
 # Claim Data Generation Constants
 claim_names = [

@@ -24,6 +24,7 @@ class AddClaimData(BaseModel):
     ClaimUniqueId: str
     ClaimTin: str
     ClaimPlaceOfService: str
+    ClaimAuditTime: datetime = Field(default=(datetime.now(tz=timezone.utc)))
 
 
 class ClaimResponse(BaseModel):
@@ -37,6 +38,7 @@ class ClaimResponse(BaseModel):
     ClaimPlaceOfService: str
     ClaimTPA: str
     ClaimTin: str
+    ClaimAuditTime: datetime
 
     @classmethod
     def from_claim_tuple(cls, row: tuple):
@@ -53,9 +55,15 @@ class ClaimResponse(BaseModel):
             ClaimUniqueId=row[7],
             ClaimTin=row[8],
             ClaimPlaceOfService=row[9],
+            ClaimAuditTime=row[10],
         )
 
     # Format ClaimDate and ClaimCloseEstimation
     @field_serializer("ClaimDate", "ClaimCloseEstimation")
     def serialize_claim_date(self, dt: datetime) -> str:
         return dt.strftime("%d %b %Y, %I:%M %p")
+
+
+class UpdateClaim(BaseModel):
+    ClaimStatus: ClaimStatus
+    ClaimAuditTime: datetime = Field(default=datetime.now(tz=timezone.utc))

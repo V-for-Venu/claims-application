@@ -25,6 +25,7 @@ class Claims(SQLModel, table=True):
     ClaimUniqueId: str
     ClaimTin: str
     ClaimPlaceOfService: str
+    ClaimAuditTime: datetime
 
     # Format ClaimDate and ClaimCloseEstimation
     @field_serializer("ClaimDate", "ClaimCloseEstimation")

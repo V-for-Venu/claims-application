@@ -9,7 +9,9 @@ from constants import (
     claim_names,
     claim_status,
     claim_TPA,
+    get_latest_claims_url,
     place_of_service,
+    update_claims_url,
 )
 from requests import Session
 
@@ -41,6 +43,7 @@ def generate_data(n=5):
                 "ClaimUniqueId": str(uuid4()),
                 "ClaimTin": f"{randint(100000000, 999999999)}",
                 "ClaimPlaceOfService": choice(place_of_service),
+                "ClaimAuditTime": (datetime.now(tz=timezone.utc)).isoformat(),
             }
             time.sleep(0.5)
             try:
@@ -55,5 +58,33 @@ def generate_data(n=5):
                 print(f"Error occurred while adding Claims: {e}")
 
 
+def update_data(n=5):
+    """
+    Generate Random Claim Data
+    """
+    with Session() as session:
+        max_id = session.get(get_latest_claims_url).json()["ClaimId"]
+        for _ in range(n):
+            ClaimId = {"id": randint(1, max_id)}
+            payload = {
+                "ClaimStatus": choice(claim_status),
+                "ClaimAuditTime": datetime.now(tz=timezone.utc).isoformat(),
+            }
+            time.sleep(0.5)
+            try:
+                response = session.patch(
+                    update_claims_url, json=payload, params=ClaimId
+                )
+                if response.status_code == 200:
+                    print(response.json()["detail"])
+                else:
+                    print(
+                        f"Error Updating Claims: {response.status_code} - {response.text}"
+                    )
+            except Exception as e:  # noqa: BLE001
+                print(f"Error occurred while Updating Claims: {e}")
+
+
 if __name__ == "__main__":
     generate_data(int(input("Enter Random Claim Data Count to Generate: ")))
+    update_data(int(input("Enter Random Claim Data Count to Update: ")))

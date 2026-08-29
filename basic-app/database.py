@@ -98,10 +98,17 @@ class Database:
 
     def get_latest_claims(self):
         latest_claim = f"""
-        SELECT * FROM {table} where claimid in 
-        (
-            SELECT MAX(claimId) from {table}
+        SELECT * FROM {table} where ClaimID IN (
+        SELECT MAX(ClaimID) from {table}
         )
+        """
+        result = self.cursor.execute(latest_claim)
+        return result.fetchone()
+
+    def get_latest_claims_updated(self):
+        latest_claim = f"""
+        SELECT * FROM {table} ORDER BY ClaimAuditTime DESC
+        LIMIT 1
         """
         result = self.cursor.execute(latest_claim)
         return result.fetchone()
@@ -176,3 +183,4 @@ def random_data_generator(n):
 
 if __name__ == "__main__":
     print(random_data_generator(10))
+    # drop_table() - Uncomment this while Dropping a New Table

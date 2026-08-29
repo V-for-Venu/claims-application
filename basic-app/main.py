@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 
 from claims_data import claims_data
-from claims_data_model import AddClaimData, ClaimResponse, ClaimStatus
+from claims_data_model import AddClaimData, ClaimResponse, ClaimStatus, UpdateClaim
 from database import Database
 from fastapi import FastAPI, HTTPException, status
 from new_database.claims_sql_data_model import Claims
@@ -123,14 +123,17 @@ async def update_claims(id: int, new_claim_record: AddClaimData) -> dict:
         )
 
 
-@app.patch("/update/claims/status")
-async def update_claim_status(id: int, claim_status: str, session: SessionDep) -> dict:
+@app.patch("/update/claims")
+async def update_claim_status(
+    id: int, payload: UpdateClaim, session: SessionDep
+) -> dict:
 
     claim_data = session.get(Claims, id)
     if claim_data:
-        claim_data.ClaimStatus = claim_status
+        claim_data.ClaimStatus = payload.ClaimStatus.value
+        claim_data.ClaimAuditTime = payload.ClaimAuditTime
         session.commit()
-        return {"detail": "Claim Updated Successfully"}
+        return {"detail": f"Claim {id} Updated Successfully"}
 
     else:
         raise HTTPException(
@@ -209,6 +212,11 @@ async def delete_claims(id: int, session: SessionDep) -> dict:
 @app.get("/get/claims/latest")
 async def get_latest_claim(session: SessionDep) -> ClaimResponse:
     return ClaimResponse.from_claim_tuple(db.get_latest_claims())
+
+
+@app.get("/get/claims/latest_updated")
+async def get_latest_updated_claim(session: SessionDep) -> ClaimResponse:
+    return ClaimResponse.from_claim_tuple(db.get_latest_claims_updated())
 
 
 # -- Static Data Code -- #
