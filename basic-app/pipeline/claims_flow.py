@@ -28,7 +28,6 @@ def update_watermark_task(df):
 def claims_pipeline():
     df = extract_task()
     print("===:: Data Extracted Successfully ::===")
-    print(df)
     if df.empty:
         return "No New Claims Found"
 

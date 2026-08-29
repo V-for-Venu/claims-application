@@ -138,10 +138,18 @@ Open:
 
 The dashboard can be used to view:
 
+- Deployment
+![Deployment Page](image.png)
+
 - Flow runs
-- Task execution
-- Run status
-- Logs
+![Flow Runs](image-1.png)
+
+- Task execution and Run status
+![Execution Graph](image-2.png)
+
+- Task Runs
+![Task Runs](image-3.png)
+
 - Pipeline history
 
 ### Data Generator
