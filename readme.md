@@ -6,7 +6,7 @@ The project is intentionally developed in versions, with each version introducin
 
 ---
 
-## 🚀 Version 1.0.0 — Basic Claims Application
+## 🚀 Version 1.0.0 — Basic Claims Application - basic-app
 
 - Basic medical insurance claims application.
 - CRUD operations for claim records.
@@ -16,7 +16,7 @@ The project is intentionally developed in versions, with each version introducin
 
 ---
 
-## 🚀 Version 1.0.1 — FastAPI + Persistent Database
+## 🚀 Version 1.0.1 — FastAPI + Persistent Database - basic-appas
 
 - Stable FastAPI application with persistent database storage.
 - SQLite database with SQLModel.
@@ -155,6 +155,17 @@ The dashboard can be used to view:
 ### Data Generator
 
 Run the synthetic data generator alongside the pipeline to simulate continuously arriving and updated claims data.
+
+---
+
+## PostgreSQL & Backend Architecture - app
+
+- Added PostgreSQL integration with `SQLModel`, SQLAlchemy, and `asyncpg`.
+- Configured database settings through environment variables using `pydantic-settings`.
+- Added asynchronous database access with `AsyncSession`.
+- Refactored API routes into an `APIRouter` for a cleaner, more modular structure.
+- Introduced a Service Layer to keep database operations separate from route handlers.
+- Refactored the backend into dedicated layers for routes, services, database models, and configuration.
 
 ---
 

@@ -14,6 +14,17 @@ class DbSettings(BaseSettings):
         extra="ignore",
     )
 
+    @property
+    def DATABASE_URL(self) -> str:
+        return (
+            f"postgresql+asyncpg://"
+            f"{self.POSTGRES_USER}:"
+            f"{self.POSTGRES_PASSWORD}@"
+            f"{self.POSTGRES_SERVER}:"
+            f"{self.POSTGRES_PORT}/"
+            f"{self.POSTGRES_DB}"
+        )
+
 
 settings = DbSettings()
-print(settings.POSTGRES_USER, settings.POSTGRES_PASSWORD)
+print(settings.DATABASE_URL)
