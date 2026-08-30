@@ -108,7 +108,7 @@ Open the API documentation:
 
 - Scalar
 
-[Fastapi Scalar Documentation Link](http://localhost:8000/scalar)
+[Fastapi Scalar Documentation URL](http://localhost:8000/scalar)
 
 ---
 
@@ -134,23 +134,25 @@ The pipeline is scheduled to run automatically at the configured interval.
 
 Open:
 
-[Prefect Dashboard Localhost](http://127.0.0.1:4200/v2/)
+[Prefect Dashboard Localhost URL](http://127.0.0.1:4200/v2/)
 
 The dashboard can be used to view:
 
-- Deployment
+Deployment
+
 ![Deployment Page](image.png)
 
-- Flow runs
+- Flow runs & Pipeline History
+
 ![Flow Runs](image-1.png)
 
 - Task execution and Run status
+
 ![Execution Graph](image-2.png)
 
 - Task Runs
-![Task Runs](image-3.png)
 
-- Pipeline history
+![Task Runs](image-3.png)
 
 ### Data Generator
 
