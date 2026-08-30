@@ -35,8 +35,8 @@ async def scalar_html():
     return get_scalar_api_reference(openapi_url=app.openapi_url)
 
 
-@app.get("/get/claims")
-async def get_claims(id: int, session: SessionDep):
+@app.get("/get/claims", response_model=ClaimResponse)
+async def get_claims(id: int, session: SessionDep) -> ClaimResponse:
 
     claim_data = session.get(Claims, id)
     if claim_data:

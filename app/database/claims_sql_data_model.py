@@ -21,8 +21,13 @@ class Claims(SQLModel, table=True):
     ClaimDate: datetime
     ClaimStatus: ClaimStatus
     ClaimCloseEstimation: datetime
+    ClaimUniqueId: str
+    ClaimPlaceOfService: str
+    ClaimTPA: str
+    ClaimTin: str
+    ClaimAuditTime: datetime
 
     # Format ClaimDate and ClaimCloseEstimation
-    @field_serializer("ClaimDate", "ClaimCloseEstimation")
+    @field_serializer("ClaimDate", "ClaimCloseEstimation", "ClaimAuditTime")
     def serialize_claim_date(self, dt: datetime) -> str:
         return dt.strftime("%d %b %Y, %I:%M %p")

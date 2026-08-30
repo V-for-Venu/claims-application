@@ -4,7 +4,7 @@ from enum import Enum
 from pydantic import BaseModel, Field, field_serializer
 
 
-class ClaimStatus(Enum):
+class ClaimStatus(str, Enum):
     Approved = "Approved"
     Rejected = "Rejected"
     Pending = "Pending"

@@ -1,4 +1,7 @@
 fastapi[standard]
+fastapi[all]
+pydantic
+pydantic-settings
 ptpython
 pandas
 pyarrow
