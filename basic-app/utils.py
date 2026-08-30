@@ -87,4 +87,6 @@ def update_data(n=5):
 
 if __name__ == "__main__":
     generate_data(int(input("Enter Random Claim Data Count to Generate: ")))
-    update_data(int(input("Enter Random Claim Data Count to Update: ")))
+    update_flag = int(input("Enter Random Claim Data Count to Update: "))
+    if update_flag:
+        update_data(update_flag)
