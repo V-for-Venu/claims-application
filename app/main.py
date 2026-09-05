@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from api.router import router
+from api.routers import master_router as router
 from database.session import create_db_tables
 from fastapi import FastAPI
 from rich import panel, print

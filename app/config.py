@@ -27,4 +27,3 @@ class DbSettings(BaseSettings):
 
 
 settings = DbSettings()
-print(settings.DATABASE_URL)

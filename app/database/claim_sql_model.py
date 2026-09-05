@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
+from pydantic import EmailStr
 from sqlalchemy import DateTime
 from sqlalchemy import Enum as SQLEnum
 from sqlmodel import Field, SQLModel
@@ -36,3 +37,14 @@ class Claims(SQLModel, table=True):
     # @field_serializer("ClaimDate", "ClaimCloseEstimation", "ClaimAuditTime")
     # def serialize_claim_date(self, dt: datetime) -> str:
     #     return dt.strftime("%d %b %Y, %I:%M %p")
+
+
+class Provider(SQLModel, table=True):
+    __tablename__ = "provider"
+
+    ProviderId: int = Field(default=None, primary_key=True)
+    ProviderName: str
+
+    ProviderMail: EmailStr
+    ProviderPassword: str
+    TIN: str

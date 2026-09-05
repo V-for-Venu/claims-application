@@ -5,12 +5,19 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.claim_helper import ClaimService
+from services.provider_helper import ProviderService
 
 AsyncSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
 
 
-def get_shipment_service(session: AsyncSessionDep):
+def get_claim_service(session: AsyncSessionDep):
     return ClaimService(session)
 
 
-ServiceSessionDep = Annotated[ClaimService, Depends(get_shipment_service)]
+def get_provider_service(session: AsyncSessionDep):
+    return ProviderService(session)
+
+
+ServiceSessionDep = Annotated[ClaimService, Depends(get_claim_service)]
+
+ProviderServiceDep = Annotated[ProviderService, Depends(get_provider_service)]

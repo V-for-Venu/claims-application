@@ -6,7 +6,7 @@ from schemas.claim_schema import (
 )
 from services.dependencies import ServiceSessionDep
 
-router = APIRouter()
+router = APIRouter(tags=["Claims"])
 
 
 @router.get("/get/claims", response_model=ClaimResponse)
