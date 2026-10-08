@@ -1,5 +1,11 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_base_configuration = SettingsConfigDict(
+    env_file="./.env",
+    env_ignore_empty=True,
+    extra="ignore",
+)
+
 
 class DbSettings(BaseSettings):
     POSTGRES_USER: str
@@ -8,11 +14,7 @@ class DbSettings(BaseSettings):
     POSTGRES_PORT: int
     POSTGRES_DB: str
 
-    model_config = SettingsConfigDict(
-        env_file="./.env",
-        env_ignore_empty=True,
-        extra="ignore",
-    )
+    model_config = _base_configuration
 
     @property
     def DATABASE_URL(self) -> str:
@@ -26,4 +28,12 @@ class DbSettings(BaseSettings):
         )
 
 
+class SecuritySettings(BaseSettings):
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str
+
+    model_config = _base_configuration
+
+
 settings = DbSettings()
+security_settings = SecuritySettings()
