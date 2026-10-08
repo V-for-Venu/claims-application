@@ -4,6 +4,21 @@ A learning project built around a **medical insurance claims application**, grad
 
 The project is intentionally developed in versions, with each version introducing a new engineering concept.
 
+## 🚀 Version 1.0.2 — FastAPI + User Registration + User Login/Logout + Authentication
+
+- User signup and login endpoints with password hashing, OAuth2 forms, and JWT tokens.
+- Automatic route protection using FastAPI dependencies to verify tokens.
+- User identity tracking to know who is accessing the endpoints.
+- Secure logout functionality using Redis to block used tokens.
+
+---
+
+## 🚀 Version 1.0.1 — FastAPI + Persistent Database - basic-app
+
+- Stable FastAPI application with persistent database storage.
+- SQLite database with SQLModel.
+- CRUD APIs for claims.
+
 ---
 
 ## 🚀 Version 1.0.0 — Basic Claims Application - basic-app
@@ -15,12 +30,6 @@ The project is intentionally developed in versions, with each version introducin
 - Initial in-memory data handling.
 
 ---
-
-## 🚀 Version 1.0.1 — FastAPI + Persistent Database - basic-appas
-
-- Stable FastAPI application with persistent database storage.
-- SQLite database with SQLModel.
-- CRUD APIs for claims.
 
 ### Endpoints
 
