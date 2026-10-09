@@ -53,9 +53,17 @@ async def get_dashboard_data(
     token: Annotated[str, Depends(oauth2_scheme)], service: ProviderServiceDep
 ) -> dict:
 
-    if token_decoder(token):
-        return {"message": "User Authenticated Successfully..!!"}
-    raise HTTPException(
-        detail="Invalid Token, Please Provide valid Token.",
-        status_code=status.HTTP_401_UNAUTHORIZED,
-    )
+    decoded_token = token_decoder(token)
+    if decoded_token is None:
+        raise HTTPException(
+            detail="Invalid Token, Please Provide valid Token.",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    provider_data = await service.get_provider(decoded_token["user"]["id"])
+    print(provider_data)
+
+    return {
+        "message": "User Authenticated Successfully..!!",
+        "Provider_Details": provider_data.model_dump(exclude=["ProviderPassword"]),
+    }

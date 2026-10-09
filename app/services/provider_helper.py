@@ -43,7 +43,7 @@ class ProviderService:
             provider_data={
                 "user": {
                     "name": provider_data.ProviderName,
-                    "email": provider_data.ProviderMail,
+                    "id": provider_data.ProviderId,
                 }
             }
         )
