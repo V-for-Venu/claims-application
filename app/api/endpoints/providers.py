@@ -1,10 +1,11 @@
 from typing import Annotated
 
+from constants import expiry_in_seconds
 from core.security import oauth2_scheme
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from schemas.provider_schema import GetProvider, RegisterProvider
-from services.dependencies import ProviderServiceDep
+from services.dependencies import ProviderServiceDep, get_access_token
 from utils import token_decoder
 
 router = APIRouter(prefix="/provider", tags=["Provider"])
@@ -26,7 +27,7 @@ async def register_provider(
         )
 
 
-@router.get("get_provider")
+@router.get("/get_provider")
 async def get_provider(id: int, service: ProviderServiceDep) -> GetProvider:
     provider_data = await service.get_provider(id)
     if provider_data:
@@ -37,7 +38,7 @@ async def get_provider(id: int, service: ProviderServiceDep) -> GetProvider:
         )
 
 
-@router.post("/Authentication")
+@router.post("/authentication")
 async def login_provider(
     request_form: Annotated[OAuth2PasswordRequestForm, Depends()],
     service: ProviderServiceDep,
@@ -45,15 +46,25 @@ async def login_provider(
     token = await service.authenticate_provider(
         request_form.username, request_form.password
     )
-    return {"access_token": token, "token_type": "JWT", "exp_time": 1800}
+    return {
+        "access_token": token,
+        "token_type": "JWT",
+        "exp_time": expiry_in_seconds,
+    }
 
 
-@router.get("/Dashboard")
-async def get_dashboard_data(
+@router.get("/logout")
+async def logout_provider(token_data: Annotated[dict, Depends(get_access_token)]):
+    return {"Token UUID": token_data["jti"]}
+
+
+@router.get("/token/verify")
+async def verify_provider_token(
     token: Annotated[str, Depends(oauth2_scheme)], service: ProviderServiceDep
 ) -> dict:
 
     decoded_token = token_decoder(token)
+
     if decoded_token is None:
         raise HTTPException(
             detail="Invalid Token, Please Provide valid Token.",
@@ -61,9 +72,8 @@ async def get_dashboard_data(
         )
 
     provider_data = await service.get_provider(decoded_token["user"]["id"])
-    print(provider_data)
 
     return {
         "message": "User Authenticated Successfully..!!",
-        "Provider_Details": provider_data.model_dump(exclude=["ProviderPassword"]),
+        "Provider_Details": provider_data.model_dump(exclude={"ProviderPassword"}),
     }

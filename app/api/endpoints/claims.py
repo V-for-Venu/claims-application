@@ -4,7 +4,7 @@ from schemas.claim_schema import (
     ClaimResponse,
     UpdateClaim,
 )
-from services.dependencies import ServiceSessionDep
+from services.dependencies import ProviderTokenDep, ServiceSessionDep
 
 router = APIRouter(tags=["Claims"])
 
@@ -22,7 +22,9 @@ async def get_claims(id: int, service: ServiceSessionDep) -> ClaimResponse:
 
 
 @router.post("/add/claims")
-async def add_claims(claim_data: AddClaimData, service: ServiceSessionDep) -> dict:
+async def add_claims(
+    claim_data: AddClaimData, service: ServiceSessionDep, _: ProviderTokenDep
+) -> dict:
 
     try:
         new_claim = await service.create_claim(claim_data)
