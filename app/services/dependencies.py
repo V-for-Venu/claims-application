@@ -2,6 +2,7 @@ from typing import Annotated
 
 from core.security import oauth2_scheme
 from database.claim_sql_model import Provider
+from database.redis import check_jti_in_blacklist
 from database.session import get_db_session
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,10 +22,10 @@ def get_provider_service(session: AsyncSessionDep):
     return ProviderService(session)
 
 
-def get_access_token(token: Annotated[str, Depends(oauth2_scheme)]) -> dict:
+async def get_access_token(token: Annotated[str, Depends(oauth2_scheme)]) -> dict:
 
     decoded_token = token_decoder(token)
-    if decoded_token is None:
+    if decoded_token is None or await check_jti_in_blacklist(decoded_token["jti"]):
         raise HTTPException(
             detail="Invalid Token, Please Provide valid Token.",
             status_code=status.HTTP_401_UNAUTHORIZED,
