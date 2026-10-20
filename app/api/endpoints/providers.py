@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from constants import expiry_in_seconds
 from core.security import oauth2_scheme
@@ -29,7 +30,7 @@ async def register_provider(
 
 
 @router.get("/get_provider")
-async def get_provider(id: int, service: ProviderServiceDep) -> GetProvider:
+async def get_provider(id: UUID, service: ProviderServiceDep) -> GetProvider:
     provider_data = await service.get_provider(id)
     if provider_data:
         return provider_data.model_dump()

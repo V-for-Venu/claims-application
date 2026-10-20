@@ -43,7 +43,7 @@ class ProviderService:
             provider_data={
                 "user": {
                     "name": provider_data.ProviderName,
-                    "id": provider_data.ProviderId,
+                    "id": str(provider_data.ProviderId),
                 }
             }
         )

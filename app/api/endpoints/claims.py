@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, HTTPException, status
 from schemas.claim_schema import (
     AddClaimData,
@@ -10,7 +12,7 @@ router = APIRouter(tags=["Claims"])
 
 
 @router.get("/get/claims", response_model=ClaimResponse)
-async def get_claims(id: int, service: ServiceSessionDep) -> ClaimResponse:
+async def get_claims(id: UUID, service: ServiceSessionDep) -> ClaimResponse:
 
     claim_data = await service.get_claim(id)
     if claim_data:
@@ -23,11 +25,13 @@ async def get_claims(id: int, service: ServiceSessionDep) -> ClaimResponse:
 
 @router.post("/add/claims")
 async def add_claims(
-    claim_data: AddClaimData, service: ServiceSessionDep, _: ProviderTokenDep
+    claim_data: AddClaimData,
+    service: ServiceSessionDep,
+    providerService: ProviderTokenDep,
 ) -> dict:
 
     try:
-        new_claim = await service.create_claim(claim_data)
+        new_claim = await service.create_claim(claim_data, providerService)
         return {"detail": f"Claim Created Succesfully with Id: {new_claim.ClaimId}"}
     except Exception as e:  # noqa: BLE001
         raise HTTPException(

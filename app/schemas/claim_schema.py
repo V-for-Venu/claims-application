@@ -1,6 +1,8 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from enum import Enum
+from uuid import UUID
 
+from database.claim_sql_model import ClaimStatusEnum
 from pydantic import BaseModel, Field, field_serializer
 
 
@@ -14,24 +16,22 @@ class ClaimStatus(str, Enum):
 class AddClaimData(BaseModel):
     ClaimName: str
     ClaimAmount: float
-    ClaimDate: datetime = Field(
-        default=(datetime.now(tz=timezone.utc) - timedelta(days=90))
-    )
+    ClaimDate: datetime = Field(default=(datetime.now(tz=UTC) - timedelta(days=90)))
     ClaimCloseEstimation: datetime = Field(
-        default=(datetime.now(tz=timezone.utc) + timedelta(days=10))
+        default=(datetime.now(tz=UTC) + timedelta(days=10))
     )
     ClaimTPA: str
     ClaimUniqueId: str
     ClaimTin: str
     ClaimPlaceOfService: str
-    ClaimAuditTime: datetime = Field(default=(datetime.now(tz=timezone.utc)))
+    ClaimAuditTime: datetime = Field(default=(datetime.now(tz=UTC)))
 
 
 class ClaimResponse(BaseModel):
-    ClaimId: int
+    ClaimId: UUID
     ClaimName: str
     ClaimAmount: float
-    ClaimStatus: ClaimStatus
+    ClaimStatus: ClaimStatusEnum
     ClaimDate: datetime
     ClaimCloseEstimation: datetime
     ClaimUniqueId: str
@@ -39,6 +39,10 @@ class ClaimResponse(BaseModel):
     ClaimTPA: str
     ClaimTin: str
     ClaimAuditTime: datetime
+    ClaimProviderId: UUID
+    # ProviderDetails: Provider
+
+    model_config = {"from_attributes": True}
 
     @classmethod
     def from_claim_tuple(cls, row: tuple):
@@ -56,9 +60,10 @@ class ClaimResponse(BaseModel):
             ClaimTin=row[8],
             ClaimPlaceOfService=row[9],
             ClaimAuditTime=row[10],
+            # ProviderDetails=row[11],
         )
 
-    # Format ClaimDate and ClaimCloseEstimation
+    # Format ClaimDate, ClaimCloseEstimation and ClaimAuditTime
     @field_serializer("ClaimDate", "ClaimCloseEstimation", "ClaimAuditTime")
     def serialize_claim_date(self, dt: datetime) -> str:
         return dt.strftime("%d %b %Y, %I:%M %p")
@@ -66,4 +71,4 @@ class ClaimResponse(BaseModel):
 
 class UpdateClaim(BaseModel):
     ClaimStatus: ClaimStatus
-    ClaimAuditTime: datetime = Field(default=datetime.now(tz=timezone.utc))
+    ClaimAuditTime: datetime = Field(default=datetime.now(tz=UTC))

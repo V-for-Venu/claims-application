@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from core.security import oauth2_scheme
 from database.claim_sql_model import Provider
@@ -38,7 +39,7 @@ async def get_current_provider(
     token_data: Annotated[dict, Depends(get_access_token)], service: AsyncSessionDep
 ):
 
-    return await service.get(Provider, token_data["user"]["id"])
+    return await service.get(Provider, UUID(token_data["user"]["id"]))
 
 
 ServiceSessionDep = Annotated[ClaimService, Depends(get_claim_service)]

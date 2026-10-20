@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -9,7 +11,7 @@ class RegisterProvider(BaseModel):
 
 
 class GetProvider(BaseModel):
-    ProviderId: int
+    ProviderId: UUID
     ProviderName: str
     ProviderMail: EmailStr
     TIN: str
