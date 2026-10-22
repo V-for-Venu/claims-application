@@ -15,3 +15,5 @@ class GetProvider(BaseModel):
     ProviderName: str
     ProviderMail: EmailStr
     TIN: str
+
+    model_config = {"from_attributes": True}

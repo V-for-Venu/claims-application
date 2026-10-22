@@ -16,7 +16,7 @@ async def get_claims(id: UUID, service: ServiceSessionDep) -> ClaimResponse:
 
     claim_data = await service.get_claim(id)
     if claim_data:
-        return claim_data.model_dump()
+        return ClaimResponse.model_validate(claim_data)
     else:
         raise HTTPException(
             detail="Claim not found in DB...", status_code=status.HTTP_404_NOT_FOUND

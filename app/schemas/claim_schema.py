@@ -5,6 +5,8 @@ from uuid import UUID
 from database.claim_sql_model import ClaimStatusEnum
 from pydantic import BaseModel, Field, field_serializer
 
+from schemas.provider_schema import GetProvider
+
 
 class ClaimStatus(str, Enum):
     Approved = "Approved"
@@ -40,28 +42,9 @@ class ClaimResponse(BaseModel):
     ClaimTin: str
     ClaimAuditTime: datetime
     ClaimProviderId: UUID
-    # ProviderDetails: Provider
+    Provider: GetProvider
 
     model_config = {"from_attributes": True}
-
-    @classmethod
-    def from_claim_tuple(cls, row: tuple):
-        if not row:
-            return None
-        return cls(
-            ClaimId=row[0],
-            ClaimName=row[1],
-            ClaimAmount=row[2],
-            ClaimDate=row[3],
-            ClaimStatus=row[4],
-            ClaimCloseEstimation=row[5],
-            ClaimTPA=row[6],
-            ClaimUniqueId=row[7],
-            ClaimTin=row[8],
-            ClaimPlaceOfService=row[9],
-            ClaimAuditTime=row[10],
-            # ProviderDetails=row[11],
-        )
 
     # Format ClaimDate, ClaimCloseEstimation and ClaimAuditTime
     @field_serializer("ClaimDate", "ClaimCloseEstimation", "ClaimAuditTime")
