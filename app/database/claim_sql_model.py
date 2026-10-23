@@ -38,7 +38,7 @@ class Claims(SQLModel, table=True):
     ClaimTPA: str
     ClaimUniqueId: str
     ClaimTin: str
-    ClaimPlaceOfService: str
+    ClaimPlaceOfService: str = Field(foreign_key="placeofservice.PlaceOfServiceCd")
     ClaimAuditTime: datetime = Field(sa_type=DateTime(timezone=True))
     ClaimProviderId: UUID = Field(foreign_key="provider.ProviderId")
 
@@ -47,10 +47,10 @@ class Claims(SQLModel, table=True):
         sa_relationship_kwargs={"lazy": "selectin"},
     )
 
-    # Format ClaimDate and ClaimCloseEstimation
-    # @field_serializer("ClaimDate", "ClaimCloseEstimation", "ClaimAuditTime")
-    # def serialize_claim_date(self, dt: datetime) -> str:
-    #     return dt.strftime("%d %b %Y, %I:%M %p")
+    PlaceOfService: "PlaceOfService" = Relationship(
+        back_populates="Claims",
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
 
 
 class Provider(SQLModel, table=True):
@@ -70,5 +70,17 @@ class Provider(SQLModel, table=True):
     TIN: str
     Claims: list["Claims"] = Relationship(
         back_populates="Provider",
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
+
+
+class PlaceOfService(SQLModel, table=True):
+    PlaceOfServiceCd: str = Field(primary_key=True)
+    PlacePinCode: str
+    PlaceDistrict: str
+    PlaceState: str
+
+    Claims: list["Claims"] = Relationship(
+        back_populates="PlaceOfService",
         sa_relationship_kwargs={"lazy": "selectin"},
     )

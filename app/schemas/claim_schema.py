@@ -5,6 +5,7 @@ from uuid import UUID
 from database.claim_sql_model import ClaimStatusEnum
 from pydantic import BaseModel, Field, field_serializer
 
+from schemas.placeofservice_schema import PlaceOfService as PlaceOfServiceSchema
 from schemas.provider_schema import GetProvider
 
 
@@ -43,6 +44,7 @@ class ClaimResponse(BaseModel):
     ClaimAuditTime: datetime
     ClaimProviderId: UUID
     Provider: GetProvider
+    PlaceOfService: PlaceOfServiceSchema
 
     model_config = {"from_attributes": True}
 
