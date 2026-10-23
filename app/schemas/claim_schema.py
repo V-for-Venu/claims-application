@@ -38,13 +38,11 @@ class ClaimResponse(BaseModel):
     ClaimDate: datetime
     ClaimCloseEstimation: datetime
     ClaimUniqueId: str
-    ClaimPlaceOfService: str
     ClaimTPA: str
     ClaimTin: str
     ClaimAuditTime: datetime
-    ClaimProviderId: UUID
     Provider: GetProvider
-    PlaceOfService: PlaceOfServiceSchema
+    PlaceOfService: PlaceOfServiceSchema | None
 
     model_config = {"from_attributes": True}
 
