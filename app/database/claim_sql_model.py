@@ -64,9 +64,9 @@ class Provider(SQLModel, table=True):
         )
     )
     ProviderName: str
-
     ProviderMail: EmailStr
     ProviderPassword: str
+    ProviderType: str
     TIN: str
     Claims: list["Claims"] = Relationship(
         back_populates="Provider",

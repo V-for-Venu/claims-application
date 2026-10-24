@@ -3,6 +3,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from config import DbSettings
+from database.claim_sql_model import Claims, Provider  # noqa: F401
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
