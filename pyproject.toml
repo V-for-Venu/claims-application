@@ -1,0 +1,5 @@
+[tool.ruff]
+# Tell Ruff not to look inside the alembic versions directory
+exclude = [
+    "app/migrations/versions/*.py",
+]
