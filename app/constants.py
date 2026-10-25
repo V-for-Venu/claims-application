@@ -1,1 +1,1 @@
-expiry_in_seconds = 1800
+expiry_in_seconds = 30

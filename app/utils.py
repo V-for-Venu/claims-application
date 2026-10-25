@@ -4,7 +4,8 @@ from uuid import uuid4
 import jwt
 from config import security_settings
 from constants import expiry_in_seconds
-from fastapi import HTTPException, status
+from core.exceptions import ExpiredTokenError, InvalidTokenError
+from database.redis import check_jti_in_blacklist
 
 
 def token_generator(
@@ -23,22 +24,23 @@ def token_generator(
     return token
 
 
-def token_decoder(token: str) -> dict:
+async def token_decoder(token: str) -> dict:
     try:
-        return jwt.decode(
+        decoded_token = jwt.decode(
             token,
             key=security_settings.JWT_SECRET_KEY,
             algorithms=[security_settings.JWT_ALGORITHM],
         )
+        if await check_jti_in_blacklist(decoded_token["jti"]):
+            raise ExpiredTokenError
 
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            detail="Token Expired, Please Authenticate Again.",
-            status_code=status.HTTP_401_UNAUTHORIZED,
-        )
+        return decoded_token
 
     except jwt.DecodeError:
-        return None
+        raise InvalidTokenError
+
+    except jwt.ExpiredSignatureError:
+        raise ExpiredTokenError
 
 
 def unix_timestamp_converter(time: int):

@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from api.routers import master_router as router
+from core.exceptions import add_exception_handler
 from database.session import create_db_tables
 from fastapi import FastAPI
 from rich import panel, print
@@ -17,6 +18,8 @@ async def lifespan_handler(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan_handler)
 app.include_router(router=router)
+
+add_exception_handler(app)
 
 
 @app.get("/health")

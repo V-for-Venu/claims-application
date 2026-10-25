@@ -1,3 +1,4 @@
+from core.exceptions import EntityNotFoundError, InvalidRequestError
 from database.claim_sql_model import Claims
 from schemas.claim_schema import (
     AddClaimData,
@@ -13,36 +14,46 @@ class ClaimService:
         self.session = session
 
     async def get_claim(self, id) -> ClaimResponse:
-        return await self.session.get(Claims, id)
+        claim_data = await self.session.get(Claims, id)
+        if not claim_data:
+            raise EntityNotFoundError
+        return claim_data
 
     async def create_claim(self, claim_data: AddClaimData, service) -> Claims:
+
         new_claim = Claims(
             **claim_data.model_dump(),
             ClaimStatus=ClaimStatus.Initiated.value,
             ClaimProviderId=service.ProviderId,
         )
+        if not new_claim:
+            raise InvalidRequestError
+
         self.session.add(new_claim)
         await self.session.commit()
         await self.session.refresh(new_claim)
 
-        return new_claim
+        return new_claim.ClaimId
 
     async def update_claim(self, payload: UpdateClaim, id):
         claim_data = await self.get_claim(id)
-        if claim_data:
-            claim_data.ClaimStatus = payload.ClaimStatus.value
-            claim_data.ClaimAuditTime = payload.ClaimAuditTime
-            await self.session.commit()
-            await self.session.refresh(claim_data)
-            return True
-        else:
-            return None
+        if not claim_data:
+            raise EntityNotFoundError
+        claim_data.ClaimStatus = payload.ClaimStatus.value
+        claim_data.ClaimAuditTime = payload.ClaimAuditTime
+        await self.session.commit()
+        await self.session.refresh(claim_data)
+
+        return {
+            "ClaimId": claim_data.ClaimId,
+            "ClaimStatus": claim_data.ClaimStatus,
+            "ClaimAuditTime": claim_data.ClaimAuditTime,
+        }
 
     async def delete_claim(self, id):
         claim_data = await self.get_claim(id)
-        if claim_data:
-            await self.session.delete(claim_data)
-            await self.session.commit()
-            return True
-        else:
-            return None
+        if not claim_data:
+            raise EntityNotFoundError
+        await self.session.delete(claim_data)
+        await self.session.commit()
+        return True

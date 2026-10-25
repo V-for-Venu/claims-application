@@ -1,4 +1,5 @@
 from bcrypt import checkpw, gensalt, hashpw
+from core.exceptions import EntityNotFoundError, InvalidCredentials, InvalidRequestError
 from database.claim_sql_model import Provider
 from schemas.provider_schema import GetProvider, RegisterProvider
 from sqlalchemy import select
@@ -13,7 +14,10 @@ class ProviderService:
         self.session = session
 
     async def get_provider(self, id) -> GetProvider:
-        return await self.session.get(Provider, id)
+        provider_data = await self.session.get(Provider, id)
+        if not provider_data:
+            raise EntityNotFoundError
+        return provider_data
 
     async def create_provider(self, provider_data: RegisterProvider) -> Provider:
         hashed_password = hashpw(
@@ -24,6 +28,10 @@ class ProviderService:
             ProviderPassword=hashed_password,
             ProviderType=provider_data.ProviderType.value,
         )
+
+        if not new_provider:
+            raise InvalidRequestError
+
         self.session.add(new_provider)
         await self.session.commit()
         await self.session.refresh(new_provider)
@@ -39,7 +47,7 @@ class ProviderService:
             provider_data.ProviderPassword if provider_data else DUMMY_HASH
         )
         if not provider_data or not await self.authenticator(stored_password, password):
-            return None
+            raise InvalidCredentials
 
         token = token_generator(
             provider_data={
