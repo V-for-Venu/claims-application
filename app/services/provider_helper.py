@@ -5,7 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils import token_generator
 
-salt = gensalt(rounds=12)
 DUMMY_HASH = "$2b$12$bTI0HmfW.gOy.5c2yJWxbOi2HF.LdLYmxPfWHfGjbGIG0Srp1WIn6"
 
 
@@ -17,10 +16,14 @@ class ProviderService:
         return await self.session.get(Provider, id)
 
     async def create_provider(self, provider_data: RegisterProvider) -> Provider:
-        hashed_password = hashpw(provider_data.ProviderPassword.encode(), salt).decode()
+        hashed_password = hashpw(
+            provider_data.ProviderPassword.encode(), gensalt(rounds=12)
+        ).decode()
+        print(provider_data.model_dump())
         new_provider = Provider(
-            **provider_data.model_dump(exclude=["ProviderPassword"]),
+            **provider_data.model_dump(exclude=["ProviderPassword", "ProviderType"]),
             ProviderPassword=hashed_password,
+            ProviderType=provider_data.ProviderType.value,
         )
         self.session.add(new_provider)
         await self.session.commit()
@@ -37,7 +40,7 @@ class ProviderService:
             provider_data.ProviderPassword if provider_data else DUMMY_HASH
         )
         if not provider_data or not await self.authenticator(stored_password, password):
-            return "Invalid Username or Password. Please try again."
+            return None
 
         token = token_generator(
             provider_data={

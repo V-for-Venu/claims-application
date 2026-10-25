@@ -24,7 +24,6 @@ class AddClaimData(BaseModel):
         default=(datetime.now(tz=UTC) + timedelta(days=10))
     )
     ClaimTPA: str
-    ClaimUniqueId: str
     ClaimTin: str
     ClaimPlaceOfService: str
     ClaimAuditTime: datetime = Field(default=(datetime.now(tz=UTC)))
@@ -37,7 +36,6 @@ class ClaimResponse(BaseModel):
     ClaimStatus: ClaimStatusEnum
     ClaimDate: datetime
     ClaimCloseEstimation: datetime
-    ClaimUniqueId: str
     ClaimTPA: str
     ClaimTin: str
     ClaimAuditTime: datetime

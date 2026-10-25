@@ -1,8 +1,9 @@
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import jwt
 from config import security_settings
-from constants import token_expiry_time
+from constants import expiry_in_seconds
 from fastapi import HTTPException, status
 
 
@@ -13,7 +14,7 @@ def token_generator(
         payload={
             **provider_data,
             "jti": str(uuid4()),
-            "exp": token_expiry_time,
+            "exp": datetime.now(tz=UTC) + timedelta(seconds=expiry_in_seconds),
         },
         algorithm=security_settings.JWT_ALGORITHM,
         key=security_settings.JWT_SECRET_KEY,
@@ -38,3 +39,7 @@ def token_decoder(token: str) -> dict:
 
     except jwt.DecodeError:
         return None
+
+
+def unix_timestamp_converter(time: int):
+    return datetime.fromtimestamp(time).strftime("%d %b %Y, %I:%M:%S %p")

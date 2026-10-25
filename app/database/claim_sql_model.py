@@ -16,6 +16,14 @@ class ClaimStatusEnum(str, Enum):
     Initiated = "Initiated"
 
 
+class ProviderTypeEnum(str, Enum):
+    Hospital = "Hospital"
+    Clinic = "Clinic"
+    Pharmacy = "Pharmacy"
+    Laboratory = "Laboratory"
+    Other = "Other"
+
+
 class Claims(SQLModel, table=True):
     __tablename__ = "claims"
 
@@ -36,7 +44,6 @@ class Claims(SQLModel, table=True):
     )
     ClaimCloseEstimation: datetime = Field(sa_type=DateTime(timezone=True))
     ClaimTPA: str
-    ClaimUniqueId: str
     ClaimTin: str
     ClaimPlaceOfService: str = Field(foreign_key="placeofservice.PlaceOfServiceCd")
     ClaimAuditTime: datetime = Field(sa_type=DateTime(timezone=True))
@@ -66,7 +73,11 @@ class Provider(SQLModel, table=True):
     ProviderName: str
     ProviderMail: EmailStr
     ProviderPassword: str
-    ProviderType: str
+    ProviderType: ProviderTypeEnum = Field(
+        sa_type=SQLEnum(
+            ProviderTypeEnum, name="ProviderType", native_enum=False, create_type=True
+        )
+    )
     TIN: str
     Claims: list["Claims"] = Relationship(
         back_populates="Provider",

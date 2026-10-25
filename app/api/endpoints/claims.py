@@ -42,12 +42,15 @@ async def add_claims(
 
 @router.patch("/update/claims")
 async def update_claim_status(
-    id: int, payload: UpdateClaim, service: ServiceSessionDep
+    id: UUID,
+    payload: UpdateClaim,
+    service: ServiceSessionDep,
+    providerService: ProviderTokenDep,
 ) -> dict:
 
     update_claim = await service.update_claim(id=id, payload=payload)
     if update_claim:
-        return {"detail": f"Claim {id} Updated Successfully"}
+        return {"detail": f"Claim ID: {id} Updated Successfully"}
     else:
         raise HTTPException(
             detail="Claim not found in DB...", status_code=status.HTTP_404_NOT_FOUND
@@ -55,11 +58,15 @@ async def update_claim_status(
 
 
 @router.delete("/delete/claims")
-async def delete_claims(id: int, service: ServiceSessionDep) -> dict:
+async def delete_claims(
+    id: UUID,
+    service: ServiceSessionDep,
+    providerService: ProviderTokenDep,
+) -> dict:
 
     delete_claim = await service.delete_claim(id=id)
     if delete_claim:
-        return {"detail": "Claim Deleted Successfully.."}
+        return {"detail": f"Claim ID: {id} Deleted Successfully.."}
     else:
         raise HTTPException(
             detail="Claim not found in DB...", status_code=status.HTTP_404_NOT_FOUND

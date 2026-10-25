@@ -3,12 +3,12 @@ from uuid import UUID
 
 from constants import expiry_in_seconds
 from core.security import oauth2_scheme
-from database.redis import add_jti_to_blacklist
+from database.redis import add_jti_to_blacklist, check_jti_in_blacklist
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from schemas.provider_schema import GetProvider, RegisterProvider
 from services.dependencies import ProviderServiceDep, get_access_token
-from utils import token_decoder
+from utils import token_decoder, unix_timestamp_converter
 
 router = APIRouter(prefix="/provider", tags=["Provider"])
 
@@ -48,6 +48,11 @@ async def login_provider(
     token = await service.authenticate_provider(
         request_form.username, request_form.password
     )
+    if not token:
+        raise HTTPException(
+            detail="Invalid Username or Password. Please try again.",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
     return {
         "access_token": token,
         "token_type": "JWT",
@@ -67,10 +72,17 @@ async def authorize_provider_token(
 ) -> dict:
 
     decoded_token = token_decoder(token)
+    print(decoded_token)
 
     if decoded_token is None:
         raise HTTPException(
             detail="Invalid Token, Please Provide valid Token.",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    if await check_jti_in_blacklist(decoded_token["jti"]):
+        raise HTTPException(
+            detail="Token Expired, Please Provide valid Token.",
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
 
@@ -79,4 +91,5 @@ async def authorize_provider_token(
     return {
         "message": "User Authorized Successfully..!!",
         "Provider_Details": provider_data.model_dump(exclude={"ProviderPassword"}),
+        "expiry": unix_timestamp_converter(decoded_token["exp"]),
     }

@@ -27,7 +27,7 @@ class ClaimService:
 
         return new_claim
 
-    async def update_claim(self, payload: UpdateClaim, id: int):
+    async def update_claim(self, payload: UpdateClaim, id):
         claim_data = await self.get_claim(id)
         if claim_data:
             claim_data.ClaimStatus = payload.ClaimStatus.value
@@ -38,7 +38,7 @@ class ClaimService:
         else:
             return None
 
-    async def delete_claim(self, id: int):
+    async def delete_claim(self, id):
         claim_data = await self.get_claim(id)
         if claim_data:
             await self.session.delete(claim_data)
