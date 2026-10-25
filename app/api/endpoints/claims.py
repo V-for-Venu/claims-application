@@ -25,7 +25,7 @@ async def add_claims(
 ) -> dict:
 
     new_claim_id = await service.create_claim(claim_data, providerService)
-    return {"message": f"Claim Created Successfully with ID f{new_claim_id}"}
+    return {"message": f"Claim Created Successfully with ID {new_claim_id}"}
 
 
 @router.patch("/update/claims")

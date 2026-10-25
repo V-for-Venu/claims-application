@@ -11,6 +11,6 @@ rich==15.0.0
 SQLAlchemy==2.0.51
 sqlmodel==0.0.39
 fastapi[standard]==0.143.0
-redis[hiredis]=3.4.2
+redis[hiredis]==3.4.2
 alembic==1.19.1
 scalar-fastapi==1.8.2

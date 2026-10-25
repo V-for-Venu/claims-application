@@ -22,7 +22,7 @@ class InvalidCredentials(FastClaimsError):
 class InvalidTokenError(FastClaimsError):
     """Invalid Token, Please enter a valid JWT Token"""
 
-    status = status.HTTP_406_NOT_ACCEPTABLE
+    status = status.HTTP_401_UNAUTHORIZED
 
 
 class ExpiredTokenError(FastClaimsError):
