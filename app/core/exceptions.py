@@ -1,4 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi.exceptions import ResponseValidationError
+from fastapi.responses import JSONResponse
 
 
 class FastClaimsError(Exception):
@@ -62,4 +64,21 @@ def add_exception_handler(app: FastAPI):
     for subclass in FastClaimsError.__subclasses__():
         app.add_exception_handler(
             subclass, _get_handler(subclass.status, subclass.__doc__)
+        )
+
+    @app.exception_handler(ResponseValidationError)
+    def response_validation_error_handler(request, exception):
+        error_msg = exception.errors()[0]["msg"]
+        return JSONResponse(
+            content={"error": "Something Went Wrong..."},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            headers={"X-Error": error_msg},
+        )
+
+    @app.exception_handler(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def internal_server_error_handler(request, exception):
+        return JSONResponse(
+            content={"error": "Something Went Wrong..."},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            headers={"X-Error": f"{exception}"},
         )
