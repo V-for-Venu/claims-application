@@ -43,6 +43,13 @@ class InvalidRequestError(FastClaimsError):
 
 def _get_handler(status: int, detail: str):
     def handler(request: Request, exception: Exception) -> Response:
+        from rich import panel, print
+
+        print(
+            panel.Panel(
+                f"Handled {exception.__class__.__name__}", border_style="bright_yellow"
+            )
+        )
         raise HTTPException(
             detail={"message": detail},
             status_code=status,
