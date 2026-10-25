@@ -19,7 +19,6 @@ class ProviderService:
         hashed_password = hashpw(
             provider_data.ProviderPassword.encode(), gensalt(rounds=12)
         ).decode()
-        print(provider_data.model_dump())
         new_provider = Provider(
             **provider_data.model_dump(exclude=["ProviderPassword", "ProviderType"]),
             ProviderPassword=hashed_password,
