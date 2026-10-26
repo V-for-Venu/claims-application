@@ -71,7 +71,7 @@ class Provider(SQLModel, table=True):
         )
     )
     ProviderName: str
-    ProviderMail: EmailStr
+    ProviderMail: EmailStr = Field(unique=True, index=True)
     ProviderPassword: str
     ProviderType: ProviderTypeEnum = Field(
         sa_type=SQLEnum(

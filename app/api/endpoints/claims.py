@@ -6,7 +6,10 @@ from schemas.claim_schema import (
     ClaimResponse,
     UpdateClaim,
 )
-from services.dependencies import ProviderTokenDep, ServiceSessionDep
+from services.dependencies import (
+    ProviderTokenDep,
+    ServiceSessionDep,
+)
 
 router = APIRouter(tags=["Claims"])
 
@@ -36,7 +39,11 @@ async def update_claim_status(
     providerService: ProviderTokenDep,
 ) -> dict:
 
-    updated_claim = await service.update_claim(id=id, payload=payload)
+    updated_claim = await service.update_claim(
+        id=id,
+        payload=payload,
+        providerService=providerService,
+    )
     return {"message": "Claim Updated Successfully", "updates": updated_claim}
 
 
@@ -47,5 +54,5 @@ async def delete_claims(
     providerService: ProviderTokenDep,
 ) -> dict:
 
-    if await service.delete_claim(id=id):
+    if await service.delete_claim(id=id, providerService=providerService):
         return {"message": "Claim Deleted Successfully", "deleted_claim": id}

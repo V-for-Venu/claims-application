@@ -1,4 +1,4 @@
-from core.exceptions import EntityNotFoundError, InvalidRequestError
+from core.exceptions import AuthorizationError, EntityNotFoundError, InvalidRequestError
 from database.claim_sql_model import Claims
 from schemas.claim_schema import (
     AddClaimData,
@@ -35,10 +35,12 @@ class ClaimService:
 
         return new_claim.ClaimId
 
-    async def update_claim(self, payload: UpdateClaim, id):
+    async def update_claim(self, id, payload: UpdateClaim, providerService):
         claim_data = await self.get_claim(id)
         if not claim_data:
             raise EntityNotFoundError
+        if claim_data.ClaimProviderId != providerService.ProviderId:
+            raise AuthorizationError
         claim_data.ClaimStatus = payload.ClaimStatus.value
         claim_data.ClaimAuditTime = payload.ClaimAuditTime
         await self.session.commit()
@@ -50,10 +52,12 @@ class ClaimService:
             "ClaimAuditTime": claim_data.ClaimAuditTime,
         }
 
-    async def delete_claim(self, id):
+    async def delete_claim(self, id, providerService):
         claim_data = await self.get_claim(id)
         if not claim_data:
             raise EntityNotFoundError
+        if claim_data.ClaimProviderId != providerService.ProviderId:
+            raise AuthorizationError
         await self.session.delete(claim_data)
         await self.session.commit()
         return True
