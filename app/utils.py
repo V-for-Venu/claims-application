@@ -45,3 +45,8 @@ async def token_decoder(token: str) -> dict:
 
 def unix_timestamp_converter(time: int):
     return datetime.fromtimestamp(time).strftime("%d %b %Y, %I:%M:%S %p")
+
+
+def add_log(log: str):
+    with open("file.log", "a") as a:
+        a.writelines(log)

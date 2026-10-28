@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FastClaims</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f8fd;
+        --white: #fff;
+        --ink: #172b4d;
+        --muted: #6b7b93;
+        --line: #e1e8f2;
+        --blue: #2f6fed;
+        --blue-dark: #2158c8;
+        --blue-pale: #edf4ff;
+        --orange: #d97706;
+        --orange-pale: #fff7ed;
+        --green: #13845b;
+        --red: #bd3d4c;
+        --radius: 16px;
+        --shadow: 0 8px 28px rgba(31, 61, 107, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.55 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+      .app {
+        max-width: 1120px;
+        margin: auto;
+        padding: 28px 22px 46px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        height: 44px;
+        width: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: var(--blue);
+        color: #fff;
+        font-size: 22px;
+        font-weight: 850;
+        box-shadow: 0 5px 13px #2f6fed35;
+      }
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--blue);
+      }
+      h1 {
+        font-size: 23px;
+        line-height: 1.2;
+        letter-spacing: -0.04em;
+        margin: 2px 0 0;
+      }
+      h2 {
+        font-size: 16px;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      .topmeta {
+        text-align: right;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #d6e4ff;
+        background: var(--blue-pale);
+        color: #2459ad;
+        padding: 4px 9px;
+        border-radius: 99px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+      .sidebar,
+      .content {
+        display: grid;
+        gap: 16px;
+        min-width: 0;
+      }
+      .card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+      .cardhead {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        margin-bottom: 16px;
+      }
+      .iconbox {
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        background: var(--blue-pale);
+        color: var(--blue-dark);
+        border-radius: 10px;
+        font-weight: 800;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .small {
+        font-size: 12px;
+      }
+      .cardhead p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .field {
+        margin-bottom: 14px;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        font-weight: 750;
+        color: #354a68;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid #d7e1ee;
+        border-radius: 10px;
+        padding: 11px 12px;
+        background: #fff;
+        color: var(--ink);
+        font: inherit;
+        outline: none;
+        transition:
+          border 0.15s,
+          box-shadow 0.15s;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px #2f6fed1a;
+      }
+      input::placeholder {
+        color: #9aa8ba;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font: inherit;
+        font-weight: 750;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border 0.15s,
+          transform 0.1s;
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .primary {
+        background: var(--blue);
+        color: #fff;
+      }
+      .primary:hover {
+        background: var(--blue-dark);
+      }
+      .secondary {
+        background: #fff;
+        border-color: #cbdcf4;
+        color: #2459ad;
+      }
+      .secondary:hover {
+        background: var(--blue-pale);
+      }
+      .warn {
+        background: var(--orange-pale);
+        border-color: #f4d5ae;
+        color: #a95b0b;
+      }
+      .warn:hover {
+        background: #ffefd9;
+      }
+      .full {
+        width: 100%;
+      }
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 18px 0;
+      }
+      .authline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 13px 0 0;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #a6b2c3;
+      }
+      .dot.on {
+        background: var(--green);
+        box-shadow: 0 0 0 4px #13845b17;
+      }
+      .helper {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 7px;
+      }
+      .nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 6px;
+        background: #eaf0f9;
+        border-radius: 13px;
+        margin-bottom: 16px;
+      }
+      .navbtn {
+        border: 0;
+        border-radius: 9px;
+        padding: 11px;
+        background: transparent;
+        color: #60718a;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .navbtn.active {
+        background: #fff;
+        color: var(--blue-dark);
+        box-shadow: 0 2px 8px #1d355710;
+      }
+      .workspace-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .workspace-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .workspace-title h2 {
+        font-size: 19px;
+      }
+      .workspace-title p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .operation {
+        min-width: 235px;
+      }
+      .operation label {
+        margin-bottom: 5px;
+      }
+      .operation select {
+        font-weight: 700;
+      }
+      .form-area {
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+      }
+      .form-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .form-title h3 {
+        font-size: 15px;
+        margin: 0;
+      }
+      .form-title p {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 3px 0 0;
+      }
+      .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 5px;
+      }
+      .form-actions .btn {
+        min-width: 140px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .notice {
+        display: none;
+        padding: 11px 13px;
+        border-radius: 11px;
+        border: 1px solid var(--line);
+        font-size: 12px;
+        margin-bottom: 15px;
+        overflow-wrap: anywhere;
+      }
+      .notice.show {
+        display: block;
+      }
+      .notice.ok {
+        background: #effbf5;
+        border-color: #b7e8ce;
+        color: #176c48;
+      }
+      .notice.bad {
+        background: var(--orange-pale);
+        border-color: #f3d4a8;
+        color: #9c570b;
+      }
+      .response-card {
+        margin-top: 16px;
+      }
+      .response-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .response {
+        background: #f8faff;
+        border: 1px solid #e0e8f3;
+        border-radius: 11px;
+        min-height: 90px;
+        max-height: 310px;
+        overflow: auto;
+        padding: 14px;
+        color: #294466;
+        font:
+          12px/1.65 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .response.empty {
+        color: #8998ad;
+      }
+      .hint {
+        border-radius: 10px;
+        background: #f5f8fd;
+        padding: 11px 12px;
+        color: #667993;
+        font-size: 11px;
+        margin-bottom: 16px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 11px;
+        color: #8492a6;
+        margin-top: 24px;
+      }
+      .healthline {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+      }
+      .healthline .btn {
+        flex: 1;
+      }
+      .endpoint {
+        font:
+          11px ui-monospace,
+          monospace;
+        color: #667b98;
+        background: #f4f7fc;
+        border-radius: 6px;
+        padding: 4px 7px;
+        white-space: nowrap;
+      }
+      @media (max-width: 850px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          grid-template-columns: 1fr 1fr;
+        }
+        .sidebar .connection {
+          grid-column: 1/-1;
+        }
+        .workspace-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .operation {
+          width: 100%;
+        }
+      }
+      @media (max-width: 560px) {
+        .app {
+          padding: 18px 12px 32px;
+        }
+        .topbar {
+          align-items: flex-start;
+        }
+        .topmeta {
+          display: none;
+        }
+        .sidebar {
+          grid-template-columns: 1fr;
+        }
+        .sidebar .connection {
+          grid-column: auto;
+        }
+        .card {
+          padding: 16px;
+        }
+        .row {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .form-actions {
+          flex-direction: column;
+        }
+        .form-actions .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">C</div>
+          <div>
+            <div class="eyebrow">Developer workspace</div>
+            <h1>Claims & Providers</h1>
+          </div>
+        </div>
+        <div class="topmeta">
+          FastAPI · Local API testing<br /><span class="pill"
+            >● DEVELOPMENT</span
+          >
+        </div>
+      </header>
+      <div id="notice" class="notice" role="status" aria-live="polite"></div>
+      <div class="layout">
+        <aside class="sidebar">
+          <section class="card connection">
+            <div class="cardhead">
+              <div class="iconbox">↗</div>
+              <div>
+                <h2>API connection</h2>
+                <p>Connect this page to your local backend.</p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="baseUrl">API base URL</label
+              ><input
+                id="baseUrl"
+                type="url"
+                value="http://127.0.0.1:8000"
+                placeholder="http://127.0.0.1:8000"
+              />
+            </div>
+            <button class="btn secondary full" id="healthBtn" type="button">
+              Check API health
+            </button>
+            <div class="divider"></div>
+            <div class="cardhead">
+              <div class="iconbox">♙</div>
+              <div>
+                <h2>Provider session</h2>
+                <p>Sign in to test protected endpoints.</p>
+              </div>
+            </div>
+            <form id="loginForm">
+              <div class="field">
+                <label for="username">Provider email</label
+                ><input
+                  id="username"
+                  name="username"
+                  autocomplete="username"
+                  type="email"
+                  required
+                  placeholder="provider@example.com"
+                />
+              </div>
+              <div class="field">
+                <label for="password">Password</label
+                ><input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  placeholder="Provider password"
+                />
+              </div>
+              <button class="btn primary full" type="submit">Sign in</button>
+            </form>
+            <div class="authline">
+              <span id="authDot" class="dot"></span
+              ><span id="authText">Not authenticated</span>
+            </div>
+            <div class="helper">
+              Access token stays in memory and clears on refresh.
+            </div>
+            <button
+              class="btn warn full"
+              id="logoutBtn"
+              type="button"
+              style="margin-top: 12px"
+              disabled
+            >
+              Log out provider
+            </button>
+          </section>
+          <section class="card">
+            <div class="cardhead">
+              <div class="iconbox">i</div>
+              <div>
+                <h2>Quick notes</h2>
+                <p>Before you test</p>
+              </div>
+            </div>
+            <div class="hint">
+              Provider signup and provider lookup are public in your current
+              API. Claim creation, update and delete require a valid bearer
+              token.
+            </div>
+            <div class="helper">
+              Use test data only. Avoid real patient or production information.
+            </div>
+          </section>
+        </aside>
+        <section class="content">
+          <section class="card">
+            <div class="nav" role="tablist" aria-label="API resource">
+              <button
+                class="navbtn active"
+                id="claimsTab"
+                type="button"
+                role="tab"
+                aria-selected="true"
+              >
+                Claims</button
+              ><button
+                class="navbtn"
+                id="providersTab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+              >
+                Providers
+              </button>
+            </div>
+            <div class="workspace-head">
+              <div class="workspace-title">
+                <div class="iconbox" id="resourceIcon">▤</div>
+                <div>
+                  <h2 id="resourceTitle">Claims endpoints</h2>
+                  <p id="resourceDesc">
+                    Create, inspect, update, and remove claims.
+                  </p>
+                </div>
+              </div>
+              <div class="operation">
+                <label for="operationSelect">Choose an endpoint</label
+                ><select id="operationSelect"></select>
+              </div>
+            </div>
+            <div class="form-area">
+              <div class="form-title">
+                <div>
+                  <h3 id="formTitle">Get claim details</h3>
+                  <p id="formDesc">Fetch one claim using its UUID.</p>
+                </div>
+                <span class="endpoint" id="endpointLabel">GET /get/claims</span>
+              </div>
+              <div id="formHost"></div>
+            </div>
+          </section>
+          <section class="card response-card">
+            <div class="response-head">
+              <div>
+                <h2>API response</h2>
+                <div class="small muted">
+                  HTTP status, response body, or request errors.
+                </div>
+              </div>
+              <button class="btn secondary" id="clearResponse" type="button">
+                Clear
+              </button>
+            </div>
+            <div id="response" class="response empty">
+              Your latest request response will appear here.
+            </div>
+          </section>
+        </section>
+      </div>
+      <footer class="footer">
+        Claims & Providers Console · For local development and API testing only.
+      </footer>
+    </main>
+    <script>
+      (() => {
+        const $ = (id) => document.getElementById(id);
+        let accessToken = null;
+        let currentResource = "claims";
+        const notice = $("notice"),
+          responseBox = $("response");
+        const specs = {
+          claims: [
+            {
+              value: "getClaim",
+              title: "Get claim details",
+              desc: "Fetch one claim using its UUID.",
+              method: "GET",
+              path: "/get/claims",
+              auth: false,
+              fields: [
+                {
+                  id: "claimId",
+                  label: "Claim ID (UUID)",
+                  placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                  required: true,
+                },
+              ],
+              run: async (v) =>
+                request(`/get/claims?id=${encodeURIComponent(v.claimId)}`, {
+                  auth: false,
+                }),
+            },
+            {
+              value: "addClaim",
+              title: "Add a claim",
+              desc: "Create a claim for the authenticated provider.",
+              method: "POST",
+              path: "/add/claims",
+              auth: true,
+              fields: [
+                {
+                  id: "claimName",
+                  label: "Claim name",
+                  placeholder: "Consultation reimbursement",
+                  required: true,
+                },
+                {
+                  id: "claimAmount",
+                  label: "Claim amount",
+                  type: "number",
+                  placeholder: "1500.00",
+                  required: true,
+                  min: "0.01",
+                  step: "0.01",
+                },
+                {
+                  id: "claimDate",
+                  label: "Claim date",
+                  type: "datetime-local",
+                  required: true,
+                },
+                {
+                  id: "claimClose",
+                  label: "Close estimation",
+                  type: "datetime-local",
+                  required: true,
+                },
+                {
+                  id: "claimTPA",
+                  label: "TPA",
+                  placeholder: "Third-party administrator",
+                  required: true,
+                },
+                {
+                  id: "claimTin",
+                  label: "Claim TIN",
+                  placeholder: "TIN / reference",
+                  required: true,
+                },
+                {
+                  id: "placeCode",
+                  label: "Place of service code",
+                  placeholder: "Existing place-of-service code",
+                  required: true,
+                },
+              ],
+              run: async (v) =>
+                request("/add/claims", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    ClaimName: v.claimName.trim(),
+                    ClaimAmount: Number(v.claimAmount),
+                    ClaimDate: new Date(v.claimDate).toISOString(),
+                    ClaimCloseEstimation: new Date(v.claimClose).toISOString(),
+                    ClaimTPA: v.claimTPA.trim(),
+                    ClaimTin: v.claimTin.trim(),
+                    ClaimPlaceOfService: v.placeCode.trim(),
+                    ClaimAuditTime: new Date().toISOString(),
+                  }),
+                }),
+            },
+            {
+              value: "updateClaim",
+              title: "Update claim status",
+              desc: "Set the status of an existing claim.",
+              method: "PATCH",
+              path: "/update/claims?id={claimId}",
+              auth: true,
+              fields: [
+                {
+                  id: "claimId",
+                  label: "Claim ID (UUID)",
+                  placeholder: "Claim UUID",
+                  required: true,
+                },
+                {
+                  id: "claimStatus",
+                  label: "New status",
+                  type: "select",
+                  required: true,
+                  options: ["Initiated", "Pending", "Approved", "Rejected"],
+                },
+              ],
+              run: async (v) =>
+                request(`/update/claims?id=${encodeURIComponent(v.claimId)}`, {
+                  method: "PATCH",
+                  body: JSON.stringify({
+                    ClaimStatus: v.claimStatus,
+                    ClaimAuditTime: new Date().toISOString(),
+                  }),
+                }),
+            },
+            {
+              value: "deleteClaim",
+              title: "Delete a claim",
+              desc: "Permanently remove a claim. This cannot be undone.",
+              method: "DELETE",
+              path: "/delete/claims?id={claimId}",
+              auth: true,
+              danger: true,
+              fields: [
+                {
+                  id: "claimId",
+                  label: "Claim ID (UUID)",
+                  placeholder: "Claim UUID",
+                  required: true,
+                },
+              ],
+              run: async (v) => {
+                if (!confirm(`Permanently delete claim ${v.claimId}?`))
+                  return { message: "Delete cancelled." };
+                return request(
+                  `/delete/claims?id=${encodeURIComponent(v.claimId)}`,
+                  { method: "DELETE" },
+                );
+              },
+            },
+          ],
+          providers: [
+            {
+              value: "signupProvider",
+              title: "Add provider",
+              desc: "Register a provider account.",
+              method: "POST",
+              path: "/provider/signup",
+              auth: false,
+              fields: [
+                {
+                  id: "providerName",
+                  label: "Provider name",
+                  placeholder: "Hospital or clinic name",
+                  required: true,
+                },
+                {
+                  id: "providerMail",
+                  label: "Provider email",
+                  type: "email",
+                  placeholder: "provider@example.com",
+                  required: true,
+                },
+                {
+                  id: "providerPassword",
+                  label: "Password",
+                  type: "password",
+                  placeholder: "Create a password",
+                  required: true,
+                },
+                {
+                  id: "providerType",
+                  label: "Provider type",
+                  type: "select",
+                  required: true,
+                  options: [
+                    "Hospital",
+                    "Clinic",
+                    "Pharmacy",
+                    "Laboratory",
+                    "Other",
+                  ],
+                },
+                {
+                  id: "providerTin",
+                  label: "TIN",
+                  placeholder: "Tax identification number",
+                  required: true,
+                },
+              ],
+              run: async (v) =>
+                request("/provider/signup", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    ProviderName: v.providerName.trim(),
+                    ProviderMail: v.providerMail.trim(),
+                    ProviderPassword: v.providerPassword,
+                    ProviderType: v.providerType,
+                    TIN: v.providerTin.trim(),
+                  }),
+                }),
+            },
+            {
+              value: "getProvider",
+              title: "Get provider details",
+              desc: "Fetch provider information using its UUID.",
+              method: "GET",
+              path: "/provider/get_provider?id={providerId}",
+              auth: false,
+              fields: [
+                {
+                  id: "providerId",
+                  label: "Provider ID (UUID)",
+                  placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                  required: true,
+                },
+              ],
+              run: async (v) =>
+                request(
+                  `/provider/get_provider?id=${encodeURIComponent(v.providerId)}`,
+                  { auth: false },
+                ),
+            },
+            {
+              value: "verifyToken",
+              title: "Verify current token",
+              desc: "Check the signed-in provider token and retrieve its details.",
+              method: "GET",
+              path: "/provider/token/verify",
+              auth: true,
+              fields: [],
+              run: async () =>
+                request("/provider/token/verify", { method: "GET" }),
+            },
+            {
+              value: "logoutProvider",
+              title: "Log out provider",
+              desc: "Call the backend logout endpoint to blacklist the current token.",
+              method: "GET",
+              path: "/provider/logout",
+              auth: true,
+              danger: true,
+              fields: [],
+              run: async () => {
+                if (!accessToken)
+                  throw new Error("Sign in first to log out through the API.");
+                const result = await request("/provider/logout", {
+                  method: "GET",
+                });
+                accessToken = null;
+                setAuth(false, "Logged out · token revoked by API");
+                return result;
+              },
+            },
+          ],
+        };
+        function baseUrl() {
+          return $("baseUrl").value.trim().replace(/\/+$/, "");
+        }
+        function showNotice(message, kind = "ok") {
+          notice.textContent = message;
+          notice.className = `notice show ${kind}`;
+        }
+        function showResponse(data) {
+          responseBox.textContent =
+            typeof data === "string" ? data : JSON.stringify(data, null, 2);
+          responseBox.classList.remove("empty");
+        }
+        function setAuth(on, label) {
+          $("authDot").classList.toggle("on", on);
+          $("authText").textContent = label;
+          $("logoutBtn").disabled = !on;
+        }
+        async function request(path, options = {}) {
+          if (!baseUrl()) throw Error("Enter the API base URL first.");
+          const { auth, ...fetchOptions } = options;
+          const headers = new Headers(fetchOptions.headers || {});
+          if (fetchOptions.body && !headers.has("Content-Type"))
+            headers.set("Content-Type", "application/json");
+          if (accessToken && auth !== false)
+            headers.set("Authorization", `Bearer ${accessToken}`);
+          let res;
+          try {
+            res = await fetch(`${baseUrl()}${path}`, {
+              ...fetchOptions,
+              headers,
+            });
+          } catch (e) {
+            const message =
+              "Could not reach the API. Check that FastAPI is running and CORS allows this page origin. " +
+              e.message;
+            showResponse({ error: message });
+            throw new Error(message);
+          }
+          const raw = await res.text();
+          let data;
+          try {
+            data = raw
+              ? JSON.parse(raw)
+              : { message: "Request completed with an empty response." };
+          } catch {
+            data = raw;
+          }
+          showResponse({ httpStatus: res.status, ok: res.ok, response: data });
+          if (!res.ok) {
+            const detail =
+              data && typeof data === "object"
+                ? data.detail || data.message || JSON.stringify(data)
+                : data;
+            throw Error(`HTTP ${res.status}: ${detail}`);
+          }
+          return data;
+        }
+        function handleError(e) {
+          showNotice(e.message || String(e), "bad");
+        }
+        function switchResource(resource) {
+          currentResource = resource;
+          const claims = resource === "claims";
+          $("claimsTab").classList.toggle("active", claims);
+          $("providersTab").classList.toggle("active", !claims);
+          $("claimsTab").setAttribute("aria-selected", String(claims));
+          $("providersTab").setAttribute("aria-selected", String(!claims));
+          $("resourceTitle").textContent = claims
+            ? "Claims endpoints"
+            : "Provider endpoints";
+          $("resourceDesc").textContent = claims
+            ? "Create, inspect, update, and remove claims."
+            : "Register providers, retrieve details, verify tokens, and log out.";
+          $("resourceIcon").textContent = claims ? "▤" : "♙";
+          $("operationSelect").innerHTML = "";
+          specs[resource].forEach((s) => {
+            const o = document.createElement("option");
+            o.value = s.value;
+            o.textContent = s.title;
+            $("operationSelect").append(o);
+          });
+          renderOperation();
+        }
+        function renderOperation() {
+          const spec =
+            specs[currentResource].find(
+              (s) => s.value === $("operationSelect").value,
+            ) || specs[currentResource][0];
+          $("formTitle").textContent = spec.title;
+          $("formDesc").textContent = spec.desc;
+          $("endpointLabel").textContent = spec.method + " " + spec.path;
+          const host = $("formHost");
+          host.innerHTML = "";
+          if (spec.auth && !accessToken) {
+            const hint = document.createElement("div");
+            hint.className = "hint";
+            hint.textContent =
+              "This endpoint requires a valid provider token. Sign in using the panel on the left before submitting.";
+            host.append(hint);
+          }
+          const form = document.createElement("form");
+          form.id = "dynamicForm";
+          const fieldsWrap = document.createElement("div");
+          fieldsWrap.className = spec.fields.length > 1 ? "fields-grid" : "";
+          if (spec.fields.length > 1)
+            fieldsWrap.style.cssText =
+              "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px";
+          spec.fields.forEach((f) => {
+            const wrap = document.createElement("div");
+            wrap.className = "field";
+            const label = document.createElement("label");
+            label.htmlFor = f.id;
+            label.textContent = f.label;
+            wrap.append(label);
+            let input;
+            if (f.type === "select") {
+              input = document.createElement("select");
+              f.options.forEach((val) => {
+                const opt = document.createElement("option");
+                opt.value = val;
+                opt.textContent = val;
+                input.append(opt);
+              });
+            } else {
+              input = document.createElement("input");
+              input.type = f.type || "text";
+              if (f.placeholder) input.placeholder = f.placeholder;
+              if (f.min) input.min = f.min;
+              if (f.step) input.step = f.step;
+            }
+            input.id = f.id;
+            input.name = f.id;
+            if (f.required) input.required = true;
+            wrap.append(input);
+            fieldsWrap.append(wrap);
+          });
+          form.append(fieldsWrap);
+          if (spec.fields.some((f) => f.type === "datetime-local")) {
+            const dateHint = document.createElement("div");
+            dateHint.className = "helper";
+            dateHint.textContent =
+              "Times are converted to ISO 8601 before sending to the API.";
+            form.append(dateHint);
+          }
+          const actions = document.createElement("div");
+          actions.className = "form-actions";
+          const submit = document.createElement("button");
+          submit.type = "submit";
+          submit.className = "btn " + (spec.danger ? "warn" : "primary");
+          submit.textContent =
+            spec.value === "deleteClaim"
+              ? "Delete claim"
+              : spec.value === "logoutProvider"
+                ? "Log out provider"
+                : spec.value === "signupProvider"
+                  ? "Create provider"
+                  : spec.value === "addClaim"
+                    ? "＋ Create claim"
+                    : spec.value === "updateClaim"
+                      ? "Update claim status"
+                      : spec.value === "verifyToken"
+                        ? "Verify token"
+                        : spec.value === "getProvider"
+                          ? "Get provider details"
+                          : "Get claim details";
+          actions.append(submit);
+          if (spec.fields.length) {
+            const reset = document.createElement("button");
+            reset.type = "reset";
+            reset.className = "btn secondary";
+            reset.textContent = "Clear fields";
+            actions.append(reset);
+          }
+          form.append(actions);
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            submit.disabled = true;
+            submit.textContent = "Sending request…";
+            try {
+              if (spec.auth && !accessToken)
+                throw Error(
+                  "Sign in first. This endpoint requires a valid provider token.",
+                );
+              const values = {};
+              spec.fields.forEach(
+                (f) => (values[f.id] = form.elements[f.id].value),
+              );
+              const result = await spec.run(values);
+              if (spec.value === "getClaim")
+                showNotice("Claim retrieved successfully.", "ok");
+              else if (spec.value === "getProvider")
+                showNotice("Provider details retrieved successfully.", "ok");
+              else if (spec.value === "signupProvider")
+                showNotice(
+                  "Provider signup request succeeded. Save the Provider ID from the response.",
+                  "ok",
+                );
+              else if (spec.value === "addClaim")
+                showNotice(
+                  "Claim creation request succeeded. Save the Claim ID from the response.",
+                  "ok",
+                );
+              else if (spec.value === "updateClaim")
+                showNotice("Claim status updated successfully.", "ok");
+              else if (spec.value === "deleteClaim")
+                showNotice("Delete request completed.", "ok");
+              else if (spec.value === "verifyToken")
+                showNotice("Token verified successfully.", "ok");
+              else if (spec.value === "logoutProvider")
+                showNotice("Provider logged out and token cleared.", "ok");
+              if (["addClaim", "signupProvider"].includes(spec.value))
+                form.reset();
+            } catch (err) {
+              handleError(err);
+            } finally {
+              submit.disabled = false;
+              submit.textContent =
+                spec.value === "deleteClaim"
+                  ? "Delete claim"
+                  : spec.value === "logoutProvider"
+                    ? "Log out provider"
+                    : spec.value === "signupProvider"
+                      ? "Create provider"
+                      : spec.value === "addClaim"
+                        ? "＋ Create claim"
+                        : spec.value === "updateClaim"
+                          ? "Update claim status"
+                          : spec.value === "verifyToken"
+                            ? "Verify token"
+                            : spec.value === "getProvider"
+                              ? "Get provider details"
+                              : spec.value === "getClaim"
+                                ? "Get claim details"
+                                : "Submit";
+            }
+          });
+          host.append(form);
+          if (spec.fields.some((f) => f.type === "datetime-local")) {
+            const now = new Date(),
+              later = new Date(now);
+            later.setDate(later.getDate() + 10);
+            const fmt = (d) => {
+              const offset = d.getTimezoneOffset() * 60000;
+              return new Date(d - offset).toISOString().slice(0, 16);
+            };
+            if (form.elements.claimDate)
+              form.elements.claimDate.value = fmt(now);
+            if (form.elements.claimClose)
+              form.elements.claimClose.value = fmt(later);
+          }
+          if (
+            spec.fields.length > 1 &&
+            window.matchMedia("(max-width:560px)").matches
+          )
+            fieldsWrap.style.gridTemplateColumns = "1fr";
+        }
+        $("claimsTab").addEventListener("click", () =>
+          switchResource("claims"),
+        );
+        $("providersTab").addEventListener("click", () =>
+          switchResource("providers"),
+        );
+        $("operationSelect").addEventListener("change", renderOperation);
+        $("healthBtn").addEventListener("click", async () => {
+          try {
+            const data = await request("/health", {
+              method: "GET",
+              auth: false,
+            });
+            showNotice(`API reachable: ${JSON.stringify(data)}`, "ok");
+          } catch (e) {
+            handleError(e);
+          }
+        });
+        $("loginForm").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = e.currentTarget.querySelector("button[type=submit]");
+          btn.disabled = true;
+          try {
+            const body = new URLSearchParams();
+            body.set("username", $("username").value);
+            body.set("password", $("password").value);
+            const data = await request("/provider/authentication", {
+              method: "POST",
+              body,
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              auth: false,
+            });
+            if (!data.access_token)
+              throw Error("Login response did not contain access_token.");
+            accessToken = data.access_token;
+            setAuth(true, "Authenticated · token in memory");
+            $("password").value = "";
+            showNotice(
+              "Login successful. Protected actions will use your bearer token.",
+              "ok",
+            );
+            renderOperation();
+          } catch (err) {
+            handleError(err);
+          } finally {
+            btn.disabled = false;
+          }
+        });
+        $("logoutBtn").addEventListener("click", async () => {
+          if (!accessToken) return;
+          try {
+            await request("/provider/logout", { method: "GET" });
+            accessToken = null;
+            setAuth(false, "Logged out · token revoked by API");
+            showNotice("Provider logged out successfully.", "ok");
+            renderOperation();
+          } catch (e) {
+            handleError(e);
+          }
+        });
+        $("clearResponse").addEventListener("click", () => {
+          responseBox.textContent =
+            "Your latest request response will appear here.";
+          responseBox.classList.add("empty");
+          notice.className = "notice";
+          notice.textContent = "";
+        });
+        switchResource("claims");
+      })();
+    </script>
+  </body>
+</html>

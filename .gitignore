@@ -20,3 +20,6 @@ __pycache__/
 
 # Data From the Pipeline
 basic-app/pipeline/data/gold
+
+# Ignoring Log files
+*.log
