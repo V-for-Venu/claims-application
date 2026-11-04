@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 from time import perf_counter
 
 from api.routers import master_router as router
+from constants import fastClaims_description as description
+from constants import tags_metadata
 from core.exceptions import add_exception_handler
 from database.session import create_db_tables
 from fastapi import FastAPI, Request, Response
@@ -19,7 +21,15 @@ async def lifespan_handler(app: FastAPI):
     print(panel.Panel("...Server Stopped...", border_style="red"))
 
 
-app = FastAPI(lifespan=lifespan_handler)
+app = FastAPI(
+    lifespan=lifespan_handler,
+    title="FastShip",
+    description=description,
+    docs_url=None,
+    redoc_url=None,
+    version="0.1.0",
+    openapi_tags=tags_metadata,
+)
 app.include_router(router=router)
 
 add_exception_handler(app)

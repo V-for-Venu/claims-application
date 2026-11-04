@@ -10,7 +10,7 @@ from schemas.provider_schema import GetProvider, RegisterProvider
 from services.dependencies import ProviderServiceDep, get_access_token
 from utils import token_decoder, unix_timestamp_converter
 
-router = APIRouter(prefix="/provider", tags=["Provider"])
+router = APIRouter(prefix="/provider", tags=["Providers"])
 
 
 @router.get("/get_provider")
