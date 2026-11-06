@@ -44,8 +44,6 @@ async def custom_middleware(request: Request, call_next):
 
     time_taken = round(end - start, 2)
 
-    print(response.headers)
-
     add_log(
         f"{request.method} {request.url} ({response.status_code}) {time_taken}ms \n"
     )

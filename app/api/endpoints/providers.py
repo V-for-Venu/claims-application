@@ -13,12 +13,20 @@ from utils import token_decoder, unix_timestamp_converter
 router = APIRouter(prefix="/provider", tags=["Providers"])
 
 
-@router.get("/get_provider")
+@router.get(
+    "/get_provider",
+    name="Read Provider",
+    description="Read Provider by **Provider ID**",
+)
 async def get_provider(id: UUID, service: ProviderServiceDep) -> GetProvider:
     return await service.get_provider(id)
 
 
-@router.post("/signup")
+@router.post(
+    "/signup",
+    name="Register Provider",
+    description="Register a new Provider",
+)
 async def register_provider(
     provider_data: RegisterProvider, service: ProviderServiceDep
 ) -> dict:
@@ -29,7 +37,11 @@ async def register_provider(
     }
 
 
-@router.post("/authentication")
+@router.post(
+    "/authentication",
+    name="Login Provider",
+    description="Login to the Provider Account",
+)
 async def login_provider(
     request_form: Annotated[OAuth2PasswordRequestForm, Depends()],
     service: ProviderServiceDep,
@@ -44,13 +56,21 @@ async def login_provider(
     }
 
 
-@router.get("/logout")
+@router.get(
+    "/logout",
+    name="Logout Provider",
+    description="Logout of the Provider Account",
+)
 async def logout_provider(token_data: Annotated[dict, Depends(get_access_token)]):
     await add_jti_to_blacklist(token_data["jti"])
     return {"message": "Provider Logged Out Successfully"}
 
 
-@router.get("/token/verify")
+@router.get(
+    "/token/verify",
+    name="Verify Provider Token",
+    description="Verify the validity of the Provider Token",
+)
 async def authorize_provider_token(
     token: Annotated[str, Depends(oauth2_scheme)], service: ProviderServiceDep
 ) -> dict:

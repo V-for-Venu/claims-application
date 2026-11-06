@@ -10,6 +10,8 @@ from schemas.provider_schema import GetProvider
 
 
 class ClaimStatus(str, Enum):
+    """Enum for Claim Status"""
+
     Approved = "Approved"
     Rejected = "Rejected"
     Pending = "Pending"
@@ -17,30 +19,38 @@ class ClaimStatus(str, Enum):
 
 
 class AddClaimData(BaseModel):
-    ClaimName: str
-    ClaimAmount: float
+    """Schema for Adding a New Claim"""
+
+    ClaimName: str = Field(description="Name of the Claim")
+    ClaimAmount: float = Field(description="Amount of the Claim")
     ClaimDate: datetime = Field(default=(datetime.now(tz=UTC) - timedelta(days=90)))
     ClaimCloseEstimation: datetime = Field(
         default=(datetime.now(tz=UTC) + timedelta(days=10))
     )
-    ClaimTPA: str
-    ClaimTin: str
-    ClaimPlaceOfService: str
+    ClaimTPA: str = Field(description="TPA of the Claim")
+    ClaimTin: str = Field(description="TIN of the Claim")
+    ClaimPlaceOfService: str = Field(description="Place of Service for the Claim")
     ClaimAuditTime: datetime = Field(default=(datetime.now(tz=UTC)))
 
 
 class ClaimResponse(BaseModel):
-    ClaimId: UUID
-    ClaimName: str
-    ClaimAmount: float
-    ClaimStatus: ClaimStatusEnum
-    ClaimDate: datetime
-    ClaimCloseEstimation: datetime
-    ClaimTPA: str
-    ClaimTin: str
-    ClaimAuditTime: datetime
-    Provider: GetProvider
-    PlaceOfService: PlaceOfServiceSchema | None
+    """Response Schema for Claim Details"""
+
+    ClaimId: UUID = Field(description="Unique Identifier for the Claim")
+    ClaimName: str = Field(description="Name of the Claim")
+    ClaimAmount: float = Field(description="Amount of the Claim")
+    ClaimStatus: ClaimStatusEnum = Field(description="Status of the Claim")
+    ClaimDate: datetime = Field(description="Date of the Claim")
+    ClaimCloseEstimation: datetime = Field(
+        description="Estimated Close Date of the Claim"
+    )
+    ClaimTPA: str = Field(description="TPA of the Claim")
+    ClaimTin: str = Field(description="TIN of the Claim")
+    ClaimAuditTime: datetime = Field(description="Audit Time of the Claim")
+    Provider: GetProvider = Field(description="Provider associated with the Claim")
+    PlaceOfService: PlaceOfServiceSchema | None = Field(
+        description="Place of Service for the Claim"
+    )
 
     model_config = {"from_attributes": True}
 
@@ -51,5 +61,7 @@ class ClaimResponse(BaseModel):
 
 
 class UpdateClaim(BaseModel):
+    """Schema for Updating Claim Status"""
+
     ClaimStatus: ClaimStatus
     ClaimAuditTime: datetime = Field(default=datetime.now(tz=UTC))

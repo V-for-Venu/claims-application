@@ -14,7 +14,12 @@ from services.dependencies import (
 router = APIRouter(tags=["Claims"])
 
 
-@router.get("/get/claims", response_model=ClaimResponse)
+@router.get(
+    "/get/claims",
+    response_model=ClaimResponse,
+    name="Read Claim",
+    description="Read Claim by **Claim ID**",
+)
 async def get_claims(id: UUID, service: ServiceSessionDep) -> ClaimResponse:
 
     return await service.get_claim(id)
@@ -25,6 +30,8 @@ async def add_claims(
     claim_data: AddClaimData,
     service: ServiceSessionDep,
     providerService: ProviderTokenDep,
+    name="Create Claim",
+    description="Create a new Claim",
 ) -> dict:
 
     new_claim_id = await service.create_claim(claim_data, providerService)
@@ -37,6 +44,8 @@ async def update_claim_status(
     payload: UpdateClaim,
     service: ServiceSessionDep,
     providerService: ProviderTokenDep,
+    name="Update Claim",
+    description="Update Claim by **Claim ID**",
 ) -> dict:
 
     updated_claim = await service.update_claim(
@@ -52,6 +61,8 @@ async def delete_claims(
     id: UUID,
     service: ServiceSessionDep,
     providerService: ProviderTokenDep,
+    name="Delete Claim",
+    description="Delete Claim by **Claim ID**",
 ) -> dict:
 
     if await service.delete_claim(id=id, providerService=providerService):
