@@ -14,3 +14,4 @@ fastapi[standard]==0.143.0
 redis[hiredis]==3.4.2
 alembic==1.19.1
 scalar-fastapi==1.8.2
+pytest==9.2.0
