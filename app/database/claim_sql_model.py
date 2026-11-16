@@ -22,6 +22,7 @@ class ProviderTypeEnum(str, Enum):
     Pharmacy = "Pharmacy"
     Laboratory = "Laboratory"
     Other = "Other"
+    Diagnostics = "Diagnostics"
 
 
 class Claims(SQLModel, table=True):

@@ -3,3 +3,9 @@
 exclude = [
     "app/migrations/versions/*.py",
 ]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    'ignore:Using `httpx` with `starlette.testclient` is deprecated'
+]

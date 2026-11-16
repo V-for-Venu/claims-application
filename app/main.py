@@ -1,12 +1,14 @@
 from contextlib import asynccontextmanager
 from time import perf_counter
+from typing import Annotated
+from uuid import UUID, uuid4
 
 from api.routers import master_router as router
 from constants import fastClaims_description as description
 from constants import tags_metadata
 from core.exceptions import add_exception_handler
 from database.session import create_db_tables
-from fastapi import FastAPI, Request, Response
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from rich import panel, print
 from scalar_fastapi import get_scalar_api_reference
@@ -67,3 +69,13 @@ def health_check():
 @app.get("/scalar")
 async def scalar_html():
     return get_scalar_api_reference(openapi_url=app.openapi_url)
+
+
+def gen_uuid():
+
+    return uuid4()
+
+
+@app.get("/")
+async def root(id: Annotated[UUID, Depends(gen_uuid)]):
+    return {"detail": str(id)}
