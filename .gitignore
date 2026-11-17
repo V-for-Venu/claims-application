@@ -4,6 +4,7 @@
 .venv/
 basic-app/__pycache__
 .vscode
+.schemathesis
 
 # Python bytecode cache
 __pycache__/

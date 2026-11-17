@@ -65,3 +65,10 @@ async def setup_and_teardown(test_id: str):
 
     app.dependency_overrides.clear()
     print("\n🏁 Finished!")
+
+@pytest.fixture(autouse=True)
+def mock_redis_blacklist(monkeypatch):
+    async def token_not_blacklisted(jti: str) -> bool:
+        return False
+
+    monkeypatch.setattr("utils.check_jti_in_blacklist", token_not_blacklisted)

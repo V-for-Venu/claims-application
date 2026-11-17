@@ -77,7 +77,7 @@ async def authorize_provider_token(
 
     decoded_token = await token_decoder(token)
 
-    provider_data = await service.get_provider(decoded_token["user"]["id"])
+    provider_data = await service.get_provider(UUID(decoded_token["user"]["id"]))
 
     return {
         "message": "User Authorized Successfully..!!",
