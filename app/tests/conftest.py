@@ -33,6 +33,16 @@ def test_id():
     return str(uuid4())
 
 
+@pytest_asyncio.fixture(scope="session")
+async def provider_token(client: AsyncClient):
+    response = await client.post(
+        "/provider/authentication",
+        data={"username": "vijayalabs@gmail.com", "password": "password123"},
+    )
+
+    return response.json()["access_token"]
+
+
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def setup_and_teardown(test_id: str):
     print("\n🧪 Starting tests..")

@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from bcrypt import gensalt, hashpw
+
 MOCK_CLAIMS = [
     {
         "ClaimId": "b4f1d268-d04b-4e17-b93e-2dc9d21d739e",
@@ -36,7 +38,7 @@ MOCK_PROVIDERS = [
         "ProviderMail": "vijayalabs@gmail.com",
         "ProviderType": "Hospital",
         "TIN": "12345678",
-        "ProviderPassword": "password123",
+        "ProviderPassword": hashpw((b"password123"), gensalt(rounds=12)).decode(),
     }
 ]
 
@@ -48,3 +50,19 @@ MOCK_PLACES = [
         "PlaceState": "Andhra Pradesh",
     }
 ]
+
+
+MOCK_ADD_CLAIM = [
+    {
+        "ClaimName": "Xray Hand and Leg",
+        "ClaimAmount": 180.6,
+        "ClaimDate": "2026-08-17T05:56:18.449392Z",
+        "ClaimCloseEstimation": "2026-11-26T05:56:18.449454Z",
+        "ClaimTPA": "CNC",
+        "ClaimTin": "12345",
+        "ClaimPlaceOfService": "Ongole",
+        "ClaimAuditTime": "2026-11-17T05:56:18.449688Z",
+    }
+]
+
+# MOCK_EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Im5hbWUiOiJWaWpheWEgTGFicyIsImlkIjoiMGIxMmRkOTUtNWNmNS00ZTRjLTk0M2UtZWE5OGJiYmMwZmNmIn0sImp0aSI6ImFjNWVkOWU0LTcyNDgtNGQ4OS05NjQyLTYxMDhiNTdiMjdhZCIsImV4cCI6MTc5NDg5NDkwNn0.YfjzlUSiJCtrSZVTAey-VGdSYcoad3Mu2xUDWmM1O-U"

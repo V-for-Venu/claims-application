@@ -4,7 +4,11 @@ from rich import print
 from rich.panel import Panel
 from rich.pretty import Pretty
 
-from .mock_data.mock_claims import MOCK_CLAIMS, MOCK_PROVIDERS
+from .mock_data.mock_claims import (
+    MOCK_ADD_CLAIM,
+    MOCK_CLAIMS,
+    MOCK_PROVIDERS,
+)
 
 
 @pytest.mark.asyncio
@@ -45,7 +49,7 @@ async def test_non_existent_claim(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_existing_claim(client):
+async def test_existing_claim(client: AsyncClient):
     claim_id = MOCK_CLAIMS[0]["ClaimId"]
 
     response = await client.get(f"/get/claims?id={claim_id}")
@@ -60,7 +64,7 @@ async def test_existing_claim(client):
 
 
 @pytest.mark.asyncio
-async def test_non_existent_provider(client):
+async def test_non_existent_provider(client: AsyncClient):
 
     response = await client.get(
         "/provider/get_provider?id=ab12dd95-5cf5-4e4c-943e-ea98bbbc0fcf"
@@ -71,7 +75,7 @@ async def test_non_existent_provider(client):
 
 
 @pytest.mark.asyncio
-async def test_existing_provider(client):
+async def test_existing_provider(client: AsyncClient):
     provider_id = MOCK_PROVIDERS[0]["ProviderId"]
 
     response = await client.get(f"/provider/get_provider?id={provider_id}")
@@ -83,3 +87,68 @@ async def test_existing_provider(client):
     assert response_data["ProviderName"] == "Vijaya Labs"
     assert response_data["ProviderMail"] == "vijayalabs@gmail.com"
     assert response_data["ProviderType"] == "Hospital"
+
+
+async def test_valid_provider_login(client: AsyncClient):
+    response = await client.post(
+        "/provider/authentication",
+        data={"username": "vijayalabs@gmail.com", "password": "password123"},
+    )
+
+    print(Panel(Pretty(response.json())))
+    assert response.status_code == 200
+    assert response.json()["token_type"] == "JWT"
+    assert response.json()["access_token"] is not None
+    assert response.json()["exp_time"] == 1800
+
+
+async def test_invalid_provider_login(client: AsyncClient):
+    response = await client.post(
+        "/provider/authentication",
+        data={"username": "vijayalabs@gmail.com", "password": "wrongpassword"},
+    )
+
+    print(Panel(Pretty(response.json())))
+    assert response.status_code == 401
+    assert (
+        response.json()["detail"]["message"]
+        == "Invalid Credentials, Please provider Valid Credentials"
+    )
+
+
+async def test_add_claim_authorized(client: AsyncClient, provider_token: str):
+    response = await client.post(
+        "/add/claims",
+        json=MOCK_ADD_CLAIM[0],
+        headers={"Authorization": f"Bearer {provider_token}"},
+    )
+
+    print(Panel(Pretty(response.json())))
+
+    assert response.status_code == 200
+    assert "Claim Created Successfully" in response.json()["message"]
+
+
+async def test_add_claim_invalid_token(client: AsyncClient):
+    response = await client.post(
+        "/add/claims",
+        json=MOCK_ADD_CLAIM[0],
+        headers={"Authorization": "Bearer invalid_token"},
+    )
+
+    print(Panel(Pretty(response.json())))
+
+    assert response.status_code == 401
+    assert "Invalid Token" in response.json()["detail"]["message"]
+
+
+async def test_add_claim_not_authenticated(client: AsyncClient):
+    response = await client.post(
+        "/add/claims",
+        json=MOCK_ADD_CLAIM[0],
+    )
+
+    print(Panel(Pretty(response.json())))
+
+    assert response.status_code == 401
+    assert "Not authenticated" in response.json()["detail"]
